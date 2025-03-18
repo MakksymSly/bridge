@@ -1,74 +1,115 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet, Button, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useStore } from '@/store/store';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { formatDate } from '@/utils/utils';
+import { ITodo } from '@/types/ITodo';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const App = () => {
+	const [newTodo, setNewTodo] = useState('');
+	const [modalVisible, setModalVisible] = useState(false);
+	const todos = useStore((state) => state.todos);
+	const addTodo = useStore((state) => state.addTodo);
+	const deleteTodo = useStore((state) => state.deleteTodo);
+	const toggleStatus = useStore((state) => state.toggleStatus);
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
-}
+	const handleAddTodo = () => {
+		if (!newTodo.trim()) return;
+
+		const createdNewTodo = {
+			id: Date.now(),
+			title: newTodo,
+			completed: false,
+			DateCreated: formatDate(Date.now()),
+		};
+
+		addTodo(createdNewTodo);
+		setNewTodo('');
+	};
+
+	const handleLongPress = (todo: ITodo) => {
+		Alert.alert('Выберите действие', '', [
+			{ text: 'Delete', onPress: () => deleteTodo(todo.id), style: 'destructive' },
+			{ text: 'Edit', style: 'default' },
+			{ text: todo.completed ? 'Unmark as completed' : 'Mark as completed', onPress: () => toggleStatus(todo.id), style: 'default' },
+			{ text: 'Отмена', style: 'cancel' },
+		]);
+	};
+
+	return (
+		<GestureHandlerRootView style={{ flex: 1 }}>
+			<View style={styles.content}>
+				<Text style={styles.title}>Bridge List</Text>
+
+				<TextInput style={styles.input} placeholder="Enter Task..." value={newTodo} onChangeText={setNewTodo} />
+
+				<Button onPress={handleAddTodo} title="Добавить задачу" />
+
+				<View style={styles.todosContainer}>
+					<ScrollView contentContainerStyle={styles.todosBlock} keyboardShouldPersistTaps="handled">
+						{todos.map((todo) => (
+							<TouchableOpacity key={todo.id} onLongPress={() => handleLongPress(todo)} style={styles.todoItem}>
+								<View style={[styles.todoStatus, { backgroundColor: todo.completed ? 'green' : 'red' }]} />
+								<Text>{todo.title}</Text>
+								<AntDesign name="right" size={20} color="black" />
+							</TouchableOpacity>
+						))}
+					</ScrollView>
+				</View>
+			</View>
+		</GestureHandlerRootView>
+	);
+};
+
+export default App;
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+	content: {
+		flex: 1,
+		alignItems: 'center',
+		paddingTop: 80,
+	},
+	title: {
+		fontSize: 24,
+		fontWeight: 'bold',
+		marginBottom: 10,
+	},
+	input: {
+		width: '80%',
+		height: 40,
+		borderColor: '#ccc',
+		borderWidth: 1,
+		paddingHorizontal: 10,
+		borderRadius: 8,
+		marginBottom: 10,
+	},
+	todosContainer: {
+		flex: 1,
+		width: '100%',
+	},
+	todosBlock: {
+		alignItems: 'center',
+		gap: 10,
+		paddingBottom: 20,
+	},
+	todoItem: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		width: '80%',
+		height: 70,
+		paddingLeft: 10,
+		paddingRight: 10,
+		borderRadius: 8,
+		backgroundColor: '#fafafa',
+	},
+	todoStatus: {
+		position: 'absolute',
+		left: -20,
+		width: 20,
+		height: '100%',
+		borderTopLeftRadius: 8,
+		borderBottomLeftRadius: 8,
+	},
 });
