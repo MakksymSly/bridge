@@ -14,11 +14,11 @@ export const useStore = create<Store>()(
 	persist(
 		(set) => ({
 			todos: [
-				{ id: 1, title: 'Сделать зарядку', completed: false, DateCreated: '2023-01-01' },
-				{ id: 2, title: 'Почитать книгу', completed: true, DateCreated: '2023-01-01' },
-				{ id: 3, title: 'Написать код', completed: false, DateCreated: '2023-01-01' },
-				{ id: 4, title: 'Сходить в магазин', completed: false, DateCreated: '2023-01-01' },
-				{ id: 5, title: 'Посмотреть урок по React Native', completed: true, DateCreated: '2023-01-01' },
+				{ id: 1, title: 'King in the castle', completed: false, DateCreated: '2023-01-01' },
+				{ id: 2, title: 'Do THAT', completed: true, DateCreated: '2023-01-01' },
+				{ id: 3, title: 'Sit HERE', completed: false, DateCreated: '2023-01-01' },
+				{ id: 4, title: 'BRING THIS', completed: false, DateCreated: '2023-01-01' },
+				{ id: 5, title: 'Go THERE', completed: true, DateCreated: '2023-01-01' },
 			],
 			addTodo: (todo) => set((state) => ({ todos: [...state.todos, todo] })),
 			deleteTodo: (id: number) => set((state) => ({ todos: state.todos.filter((todo) => todo.id !== id) })),
