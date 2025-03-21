@@ -1,14 +1,19 @@
-import { View, Text, StyleSheet, Button, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Button, TextInput, TouchableOpacity, Alert, ScrollView, Image, Platform } from 'react-native';
 import React, { useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useStore } from '@/store/store';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import Feather from '@expo/vector-icons/Feather';
 import { formatDate } from '@/utils/utils';
 import { ITodo } from '@/types/ITodo';
+import NewTodoModal from '@/components/NewTodoModal';
+
+const homeEmptyImage = require('@/assets/images/home-empty.png');
 
 const App = () => {
 	const [newTodo, setNewTodo] = useState('');
 	const [modalVisible, setModalVisible] = useState(false);
+	const [isNewTodoModalVisible, setIsNewTodoModalVisible] = useState(false);
 	const todos = useStore((state) => state.todos);
 	const addTodo = useStore((state) => state.addTodo);
 	const deleteTodo = useStore((state) => state.deleteTodo);
@@ -40,24 +45,35 @@ const App = () => {
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
 			<View style={styles.content}>
-				<Text style={styles.title}>Bridge List</Text>
-
-				<TextInput style={styles.input} placeholder="Enter Task..." value={newTodo} onChangeText={setNewTodo} />
-
-				<Button onPress={handleAddTodo} title="Добавить задачу" />
-
-				<View style={styles.todosContainer}>
-					<ScrollView contentContainerStyle={styles.todosBlock} keyboardShouldPersistTaps="handled">
-						{todos.map((todo) => (
-							<TouchableOpacity key={todo.id} onLongPress={() => handleLongPress(todo)} style={styles.todoItem}>
-								<View style={[styles.todoStatus, { backgroundColor: todo.completed ? 'green' : 'red' }]} />
-								<Text>{todo.title}</Text>
-								<AntDesign name="right" size={20} color="black" />
-							</TouchableOpacity>
-						))}
-					</ScrollView>
-				</View>
+				{isNewTodoModalVisible ? <NewTodoModal handleAddTodo={handleAddTodo} /> : null}
+				{!todos.length ? (
+					<View style={styles.emptyHomeContainer}>
+						<Image style={styles.emptyHomeImage} source={homeEmptyImage} />
+						<Text style={styles.emptyHomeText}>What do you want to do today?</Text>
+						<Text style={styles.emptyHomeSubText}>Tap + to add your tasks</Text>
+					</View>
+				) : (
+					<>
+						<Text style={styles.title}>Bridge List</Text>
+						<TextInput style={styles.input} placeholder="Enter Task..." value={newTodo} onChangeText={setNewTodo} />
+						<Button onPress={handleAddTodo} title="Добавить задачу" />
+						<View style={styles.todosContainer}>
+							<ScrollView contentContainerStyle={styles.todosBlock} keyboardShouldPersistTaps="handled">
+								{todos.map((todo) => (
+									<TouchableOpacity key={todo.id} onLongPress={() => handleLongPress(todo)} style={styles.todoItem}>
+										<View style={[styles.todoStatus, { backgroundColor: todo.completed ? 'green' : 'red' }]} />
+										<Text>{todo.title}</Text>
+										<AntDesign name="right" size={20} color="black" />
+									</TouchableOpacity>
+								))}
+							</ScrollView>
+						</View>
+					</>
+				)}
 			</View>
+			<TouchableOpacity onPress={() => setIsNewTodoModalVisible(true)} style={styles.addButton}>
+				<Feather name="plus" size={24} color="white" />
+			</TouchableOpacity>
 		</GestureHandlerRootView>
 	);
 };
@@ -65,10 +81,40 @@ const App = () => {
 export default App;
 
 const styles = StyleSheet.create({
+	addButton: {
+		position: 'absolute',
+		bottom: Platform.OS === 'ios' ? 90 : 10,
+		left: '50%',
+		transform: [{ translateX: -30 }],
+		width: 60,
+		height: 60,
+		borderRadius: 30,
+		backgroundColor: '#8687E7',
+		justifyContent: 'center',
+		alignItems: 'center',
+		elevation: 5,
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.3,
+		shadowRadius: 4,
+	},
+	emptyHomeContainer: {
+		display: 'flex',
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	emptyHomeImage: { width: 300, height: 300 },
 	content: {
 		flex: 1,
 		alignItems: 'center',
 		paddingTop: 80,
+	},
+	emptyHomeText: {
+		fontSize: 20,
+	},
+	emptyHomeSubText: {
+		fontSize: 16,
 	},
 	title: {
 		fontSize: 24,
@@ -91,7 +137,7 @@ const styles = StyleSheet.create({
 	todosBlock: {
 		alignItems: 'center',
 		gap: 10,
-		paddingBottom: 20,
+		paddingBottom: 100,
 	},
 	todoItem: {
 		flexDirection: 'row',
