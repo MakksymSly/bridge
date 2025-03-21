@@ -1,40 +1,24 @@
-import { View, Text, StyleSheet, Button, TextInput, TouchableOpacity, Alert, ScrollView, Image, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Image, Platform } from 'react-native';
 import React, { useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useStore } from '@/store/store';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
-import { formatDate } from '@/utils/utils';
 import { ITodo } from '@/types/ITodo';
 import NewTodoModal from '@/components/NewTodoModal';
+import { Link } from 'expo-router';
 
 const homeEmptyImage = require('@/assets/images/home-empty.png');
 
 const App = () => {
-	const [newTodo, setNewTodo] = useState('');
-	const [modalVisible, setModalVisible] = useState(false);
 	const [isNewTodoModalVisible, setIsNewTodoModalVisible] = useState(false);
 	const todos = useStore((state) => state.todos);
-	const addTodo = useStore((state) => state.addTodo);
+
 	const deleteTodo = useStore((state) => state.deleteTodo);
 	const toggleStatus = useStore((state) => state.toggleStatus);
 
-	const handleAddTodo = () => {
-		if (!newTodo.trim()) return;
-
-		const createdNewTodo = {
-			id: Date.now(),
-			title: newTodo,
-			completed: false,
-			DateCreated: formatDate(Date.now()),
-		};
-
-		addTodo(createdNewTodo);
-		setNewTodo('');
-	};
-
 	const handleLongPress = (todo: ITodo) => {
-		Alert.alert('Выберите действие', '', [
+		Alert.alert('extra actions', '', [
 			{ text: 'Delete', onPress: () => deleteTodo(todo.id), style: 'destructive' },
 			{ text: 'Edit', style: 'default' },
 			{ text: todo.completed ? 'Unmark as completed' : 'Mark as completed', onPress: () => toggleStatus(todo.id), style: 'default' },
@@ -45,7 +29,7 @@ const App = () => {
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
 			<View style={styles.content}>
-				{isNewTodoModalVisible ? <NewTodoModal handleAddTodo={handleAddTodo} /> : null}
+				{isNewTodoModalVisible ? <NewTodoModal setModalVisible={setIsNewTodoModalVisible} /> : null}
 				{!todos.length ? (
 					<View style={styles.emptyHomeContainer}>
 						<Image style={styles.emptyHomeImage} source={homeEmptyImage} />
@@ -54,17 +38,16 @@ const App = () => {
 					</View>
 				) : (
 					<>
-						<Text style={styles.title}>Bridge List</Text>
-						<TextInput style={styles.input} placeholder="Enter Task..." value={newTodo} onChangeText={setNewTodo} />
-						<Button onPress={handleAddTodo} title="Добавить задачу" />
 						<View style={styles.todosContainer}>
 							<ScrollView contentContainerStyle={styles.todosBlock} keyboardShouldPersistTaps="handled">
 								{todos.map((todo) => (
-									<TouchableOpacity key={todo.id} onLongPress={() => handleLongPress(todo)} style={styles.todoItem}>
-										<View style={[styles.todoStatus, { backgroundColor: todo.completed ? 'green' : 'red' }]} />
-										<Text>{todo.title}</Text>
-										<AntDesign name="right" size={20} color="black" />
-									</TouchableOpacity>
+									<Link href={`/todo/${todo.id}`} key={todo.id} asChild>
+										<TouchableOpacity key={todo.id} onLongPress={() => handleLongPress(todo)} style={styles.todoItem}>
+											<View style={[styles.todoStatus, { backgroundColor: todo.completed ? 'green' : 'red' }]} />
+											<Text>{todo.title}</Text>
+											<AntDesign name="right" size={20} color="black" />
+										</TouchableOpacity>
+									</Link>
 								))}
 							</ScrollView>
 						</View>
