@@ -1,3 +1,5 @@
+import { ICategory } from './ICategory';
+
 export interface ITodo {
 	id: number;
 	title: string;
@@ -6,4 +8,6 @@ export interface ITodo {
 	DateCreated: string;
 	DateEdited?: string;
 	images?: string[];
+	category?: ICategory;
+	priority?: number;
 }

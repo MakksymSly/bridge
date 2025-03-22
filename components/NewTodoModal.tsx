@@ -2,8 +2,9 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, ScrollView 
 import React, { useState } from 'react';
 import { formatDate } from '@/utils/utils';
 import { useStore } from '@/store/store';
-import { ITodo } from '@/types/ITodo';
 import * as ImagePicker from 'expo-image-picker';
+import Feather from '@expo/vector-icons/Feather';
+import Octicons from '@expo/vector-icons/Octicons';
 
 interface Props {
 	setModalVisible: (visible: boolean) => void;
@@ -12,20 +13,20 @@ interface Props {
 const NewTodoModal: React.FC<Props> = ({ setModalVisible }) => {
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
-	const [images, setImages] = useState<string[]>([]); // Массив изображений
+	const [images, setImages] = useState<string[]>([]);
 	const addTodo = useStore((state) => state.addTodo);
 
 	const pickImage = async () => {
 		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 		if (status !== 'granted') {
-			alert('Нужен доступ к галерее для загрузки фото!');
+			alert('Please grant camera roll permissions to use this feature.');
 			return;
 		}
 
 		const result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: false,
-			quality: 1, // Полное качество
+			quality: 1,
 			base64: true,
 		});
 
@@ -72,7 +73,14 @@ const NewTodoModal: React.FC<Props> = ({ setModalVisible }) => {
 				<Text style={styles.title}>ADD TASK</Text>
 				<TextInput style={styles.input} placeholder="TASK TITLE*" placeholderTextColor="#888" value={title} onChangeText={setTitle} />
 				<TextInput style={styles.textArea} multiline numberOfLines={4} placeholder="TASK DESCRIPTION*" placeholderTextColor="#888" value={description} onChangeText={setDescription} />
-
+				<View style={styles.iconContainer}>
+					<TouchableOpacity style={styles.iconButton}>
+						<Feather name="flag" size={24} color="#fff" />
+					</TouchableOpacity>
+					<TouchableOpacity style={styles.iconButton}>
+						<Octicons name="versions" size={24} color="#fff" />
+					</TouchableOpacity>
+				</View>
 				<TouchableOpacity style={styles.imageButton} onPress={pickImage}>
 					<Text style={styles.imageButtonText}>ADD IMAGE</Text>
 				</TouchableOpacity>
@@ -121,6 +129,7 @@ const styles = StyleSheet.create({
 		borderRadius: 15,
 		width: '90%',
 		maxHeight: '80%',
+		top: -150,
 	},
 	title: {
 		color: '#fff',
@@ -148,6 +157,29 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		textAlignVertical: 'top',
 		height: 100,
+	},
+	iconContainer: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'center',
+		gap: 15,
+		backgroundColor: '#4A4A4A',
+		borderRadius: 10,
+		padding: 10,
+		marginBottom: 15,
+	},
+	iconButton: {
+		backgroundColor: '#555',
+		borderRadius: 50,
+		width: 44,
+		height: 44,
+		justifyContent: 'center',
+		alignItems: 'center',
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.3,
+		shadowRadius: 3,
+		elevation: 5,
 	},
 	imageButton: {
 		backgroundColor: '#555',

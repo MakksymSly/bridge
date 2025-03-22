@@ -7,6 +7,7 @@ import Feather from '@expo/vector-icons/Feather';
 import { ITodo } from '@/types/ITodo';
 import NewTodoModal from '@/components/NewTodoModal';
 import { Link } from 'expo-router';
+import TodoTile from '@/components/TodoTile';
 
 const homeEmptyImage = require('@/assets/images/home-empty.png');
 
@@ -41,13 +42,7 @@ const App = () => {
 						<View style={styles.todosContainer}>
 							<ScrollView contentContainerStyle={styles.todosBlock} keyboardShouldPersistTaps="handled">
 								{todos.map((todo) => (
-									<Link href={`/todo/${todo.id}`} key={todo.id} asChild>
-										<TouchableOpacity key={todo.id} onLongPress={() => handleLongPress(todo)} style={styles.todoItem}>
-											<View style={[styles.todoStatus, { backgroundColor: todo.completed ? 'green' : 'red' }]} />
-											<Text>{todo.title}</Text>
-											<AntDesign name="right" size={20} color="black" />
-										</TouchableOpacity>
-									</Link>
+									<TodoTile key={todo.id} todo={todo} handleLongPress={handleLongPress} />
 								))}
 							</ScrollView>
 						</View>
@@ -121,24 +116,5 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		gap: 10,
 		paddingBottom: 100,
-	},
-	todoItem: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		width: '80%',
-		height: 70,
-		paddingLeft: 10,
-		paddingRight: 10,
-		borderRadius: 8,
-		backgroundColor: '#fafafa',
-	},
-	todoStatus: {
-		position: 'absolute',
-		left: -20,
-		width: 20,
-		height: '100%',
-		borderTopLeftRadius: 8,
-		borderBottomLeftRadius: 8,
 	},
 });
