@@ -44,6 +44,10 @@ export const useStore = create<Store>()(
 				set((state) => ({
 					todos: state.todos.map((todo) => (todo.id === todoId ? { ...todo, categoryId } : todo)),
 				})),
+			deleteTodoCategory: (categoryId: number) =>
+				set((state) => ({
+					todos: state.todos.filter((todo) => todo.category?.id !== categoryId),
+				})),
 		}),
 		{
 			name: 'Todos-Store',

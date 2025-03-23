@@ -2,13 +2,10 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Image, Pla
 import React, { useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useStore } from '@/store/store';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 import { ITodo } from '@/types/ITodo';
 import NewTodoModal from '@/components/NewTodoModal';
-import { Link } from 'expo-router';
 import TodoTile from '@/components/TodoTile';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const homeEmptyImage = require('@/assets/images/home-empty.png');
 
