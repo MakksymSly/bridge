@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { useStore } from '@/store/store';
 import { ITodo } from '@/types/ITodo';
+import Category from '@/components/Category';
 
 const id = () => {
 	const params = useLocalSearchParams();
@@ -13,6 +14,10 @@ const id = () => {
 		description: '',
 		completed: false,
 		DateCreated: '',
+		DateEdited: '',
+		images: [],
+		category: null,
+		priority: 0,
 	});
 	const [error, setError] = useState('');
 	const [modalVisible, setModalVisible] = useState(false);
@@ -54,6 +59,10 @@ const id = () => {
 								</TouchableOpacity>
 							))}
 						</View>
+					</View>
+					<View style={styles.separator}></View>
+					<View style={styles.infoRow}>
+						<Text style={styles.value}>{currentTodo.category ? <Category category={currentTodo.category} handleChoseCategory={() => {}} /> : 'N/A'}</Text>
 					</View>
 					<View style={styles.separator}></View>
 					<View style={styles.infoRow}>

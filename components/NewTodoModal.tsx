@@ -5,6 +5,8 @@ import { useStore } from '@/store/store';
 import * as ImagePicker from 'expo-image-picker';
 import Feather from '@expo/vector-icons/Feather';
 import Octicons from '@expo/vector-icons/Octicons';
+import NewCategoryModal from './NewCategoryModal';
+import { ICategory } from '@/types/ICategory';
 
 interface Props {
 	setModalVisible: (visible: boolean) => void;
@@ -14,7 +16,10 @@ const NewTodoModal: React.FC<Props> = ({ setModalVisible }) => {
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
 	const [images, setImages] = useState<string[]>([]);
+	const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
+	const [isPriorityModalVisible, setPriorityModalVisible] = useState(false);
 	const addTodo = useStore((state) => state.addTodo);
+	const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(null);
 
 	const pickImage = async () => {
 		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -46,6 +51,7 @@ const NewTodoModal: React.FC<Props> = ({ setModalVisible }) => {
 			description: description.trim(),
 			DateCreated: formatDate(Date.now()),
 			images: images.length > 0 ? images : [''],
+			category: selectedCategory,
 		};
 
 		addTodo(createdNewTodo);
@@ -54,6 +60,11 @@ const NewTodoModal: React.FC<Props> = ({ setModalVisible }) => {
 		setDescription('');
 		setImages([]);
 		setModalVisible(false);
+		setSelectedCategory(null);
+	};
+
+	const handleCategoryModalToggle = () => {
+		setCategoryModalVisible(!isCategoryModalVisible);
 	};
 
 	const handleCancel = () => {
@@ -67,46 +78,51 @@ const NewTodoModal: React.FC<Props> = ({ setModalVisible }) => {
 		setImages((prevImages) => prevImages.filter((_, i) => i !== index));
 	};
 
+	const isModalShown = !isCategoryModalVisible && !isPriorityModalVisible;
+	const isCategoryModalShown = isCategoryModalVisible && !isPriorityModalVisible;
 	return (
 		<View style={styles.overlay}>
-			<View style={styles.container}>
-				<Text style={styles.title}>ADD TASK</Text>
-				<TextInput style={styles.input} placeholder="TASK TITLE*" placeholderTextColor="#888" value={title} onChangeText={setTitle} />
-				<TextInput style={styles.textArea} multiline numberOfLines={4} placeholder="TASK DESCRIPTION*" placeholderTextColor="#888" value={description} onChangeText={setDescription} />
-				<View style={styles.iconContainer}>
-					<TouchableOpacity style={styles.iconButton}>
-						<Feather name="flag" size={24} color="#fff" />
+			{isModalShown && (
+				<View style={styles.container}>
+					<Text style={styles.title}>ADD TASK</Text>
+					<TextInput style={styles.input} placeholder="TASK TITLE*" placeholderTextColor="#888" value={title} onChangeText={setTitle} />
+					<TextInput style={styles.textArea} multiline numberOfLines={4} placeholder="TASK DESCRIPTION*" placeholderTextColor="#888" value={description} onChangeText={setDescription} />
+					<View style={styles.iconContainer}>
+						<TouchableOpacity style={styles.iconButton}>
+							<Feather name="flag" size={24} color="#fff" />
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.iconButton} onPress={handleCategoryModalToggle}>
+							<Octicons name="versions" size={24} color={selectedCategory ? selectedCategory.color : '#fff'} />
+						</TouchableOpacity>
+					</View>
+					<TouchableOpacity style={styles.imageButton} onPress={pickImage}>
+						<Text style={styles.imageButtonText}>ADD IMAGE</Text>
 					</TouchableOpacity>
-					<TouchableOpacity style={styles.iconButton}>
-						<Octicons name="versions" size={24} color="#fff" />
-					</TouchableOpacity>
-				</View>
-				<TouchableOpacity style={styles.imageButton} onPress={pickImage}>
-					<Text style={styles.imageButtonText}>ADD IMAGE</Text>
-				</TouchableOpacity>
 
-				{images.length > 0 && (
-					<ScrollView horizontal style={styles.previewContainer} showsHorizontalScrollIndicator={false}>
-						{images.map((img, index) => (
-							<View key={index} style={styles.previewWrapper}>
-								<TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
-									<Text style={styles.removeButtonText}>X</Text>
-								</TouchableOpacity>
-								<Image source={{ uri: img }} style={styles.imagePreview} resizeMode="cover" />
-							</View>
-						))}
-					</ScrollView>
-				)}
+					{images.length > 0 && (
+						<ScrollView horizontal style={styles.previewContainer} showsHorizontalScrollIndicator={false}>
+							{images.map((img, index) => (
+								<View key={index} style={styles.previewWrapper}>
+									<TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
+										<Text style={styles.removeButtonText}>X</Text>
+									</TouchableOpacity>
+									<Image source={{ uri: img }} style={styles.imagePreview} resizeMode="cover" />
+								</View>
+							))}
+						</ScrollView>
+					)}
 
-				<View style={styles.buttonContainer}>
-					<TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-						<Text style={styles.buttonText}>Cancel</Text>
-					</TouchableOpacity>
-					<TouchableOpacity style={styles.saveButton} onPress={handleAddTodo}>
-						<Text style={styles.buttonText}>Save</Text>
-					</TouchableOpacity>
+					<View style={styles.buttonContainer}>
+						<TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+							<Text style={styles.buttonText}>Cancel</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.saveButton} onPress={handleAddTodo}>
+							<Text style={styles.buttonText}>Save</Text>
+						</TouchableOpacity>
+					</View>
 				</View>
-			</View>
+			)}
+			{isCategoryModalShown && <NewCategoryModal handleCategoryModalToggle={handleCategoryModalToggle} setSelectedCategory={setSelectedCategory} />}
 		</View>
 	);
 };

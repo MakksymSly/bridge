@@ -8,6 +8,6 @@ export interface ITodo {
 	DateCreated: string;
 	DateEdited?: string;
 	images?: string[];
-	category?: ICategory;
+	category?: ICategory | null;
 	priority?: number;
 }

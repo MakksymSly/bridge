@@ -8,6 +8,7 @@ import { ITodo } from '@/types/ITodo';
 import NewTodoModal from '@/components/NewTodoModal';
 import { Link } from 'expo-router';
 import TodoTile from '@/components/TodoTile';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const homeEmptyImage = require('@/assets/images/home-empty.png');
 

@@ -26,12 +26,22 @@ const TodoTile: React.FC<Props> = (props) => {
 					}}
 				/>
 				<View style={styles.todoItemTextContainer}>
-					<Text style={[styles.todoItemText, { textDecorationLine: todo.completed ? 'line-through' : 'none' }]}>{todo.title}</Text>
+					<Text numberOfLines={1} ellipsizeMode="tail" style={[styles.todoItemText, { textDecorationLine: todo.completed ? 'line-through' : 'none' }]}>
+						{todo.title}
+					</Text>
 					<Text style={styles.todoItemSubText}>{todo.DateCreated}</Text>
 				</View>
-				<View style={styles.todoItemPriorityContainer}>
-					<Ionicons name="flag-outline" size={24} color="#8687E7" />
-					<Text style={styles.todoItemPriorityText}>1</Text>
+				<View style={styles.todoItemInfoContainer}>
+					{todo.category && (
+						<View style={[styles.todoItemCategoryContainer, { backgroundColor: todo.category?.color }]}>
+							<Text style={styles.todoItemCategoryIcon}>{todo.category?.icon}</Text>
+							<Text style={styles.todoItemCategoryText}>{todo.category?.name}</Text>
+						</View>
+					)}
+					<View style={styles.todoItemPriorityContainer}>
+						<Ionicons name="flag-outline" size={24} color="#8687E7" />
+						<Text style={styles.todoItemPriorityText}>1</Text>
+					</View>
 				</View>
 			</TouchableOpacity>
 		</Link>
@@ -43,7 +53,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		width: '80%',
+		width: '90%',
 		height: 72,
 		paddingLeft: 10,
 		paddingRight: 10,
@@ -52,10 +62,12 @@ const styles = StyleSheet.create({
 	},
 
 	todoItemTextContainer: {
-		flex: 5,
+		flex: 7,
 		gap: 4,
 	},
 	todoItemText: {
+		maxWidth: '70%',
+
 		fontSize: 16,
 	},
 	todoItemSubText: { color: 'grey', fontSize: 14 },
@@ -72,5 +84,19 @@ const styles = StyleSheet.create({
 	todoItemPriorityText: {
 		color: '#8687E7',
 	},
+	todoItemCategoryContainer: {
+		display: 'flex',
+		flexDirection: 'row',
+		borderWidth: 1,
+		padding: 4,
+		borderRadius: 8,
+	},
+	todoItemCategoryText: {},
+	todoItemInfoContainer: {
+		display: 'flex',
+		flexDirection: 'row',
+		gap: 5,
+	},
+	todoItemCategoryIcon: {},
 });
 export default TodoTile;
