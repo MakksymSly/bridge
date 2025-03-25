@@ -1,16 +1,37 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import React from 'react';
 import { ICategory } from '@/types/ICategory';
+import { useStore } from '@/store/store';
+
 interface Props {
 	category: ICategory;
 	handleChoseCategory: (category: ICategory) => void;
 }
-const Category: React.FC<Props> = (props) => {
-	const { category } = props;
+
+const Category: React.FC<Props> = ({ category, handleChoseCategory }) => {
+	const deleteCategory = useStore((state) => state.deleteTodoCategory);
+	const categoryExists = useStore((state) => state.categories.some((c) => c.id === category.id));
+
+	const handleLongPress = () => {
+		Alert.alert('Actions', '', [
+			{
+				text: 'Delete',
+				style: 'destructive',
+				onPress: () => {
+					deleteCategory(category.id);
+				},
+			},
+			{ text: 'Edit', style: 'default' },
+			{ text: 'Cancel', style: 'cancel' },
+		]);
+	};
+
+	if (!categoryExists) return null;
+
 	return (
-		<TouchableOpacity onPress={() => props.handleChoseCategory(category)}>
+		<TouchableOpacity onPress={() => handleChoseCategory(category)} onLongPress={handleLongPress}>
 			<View style={[styles.priorityContainer, { backgroundColor: category.color }]}>
-				<Text>{category.icon}</Text>
+				<Text style={styles.priorityText}>{category.icon}</Text>
 				<Text numberOfLines={1} style={styles.priorityText}>
 					{category.name}
 				</Text>

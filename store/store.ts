@@ -8,11 +8,13 @@ interface Store {
 	todos: ITodo[];
 	addTodo: (todo: ITodo) => void;
 	deleteTodo: (id: number) => void;
+	updateTodo: (todo: ITodo, id: number) => void;
 	reset: () => void;
 	toggleStatus: (id: number) => void;
 	categories: ICategory[];
 	addCategory: (name: string, icon: string, color: string) => void;
 	updateTodoCategory: (todoId: number, categoryId: string) => void;
+	deleteTodoCategory: (categoryId: number) => void;
 }
 
 export const useStore = create<Store>()(
@@ -25,6 +27,7 @@ export const useStore = create<Store>()(
 				set((state) => ({
 					todos: state.todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)),
 				})),
+			updateTodo: (todo, id) => set((state) => ({ todos: state.todos.map((t) => (t.id === id ? todo : t)) })),
 			reset: () => set({ todos: [] }),
 			categories: [
 				{ id: 1, name: 'Work', icon: '💼', color: 'rgba(0, 123, 255, 0.5)' },
@@ -40,13 +43,14 @@ export const useStore = create<Store>()(
 				set((state) => ({
 					categories: [...state.categories, { id: Date.now(), name, icon, color }],
 				})),
+			deleteTodoCategory: (categoryId: number) =>
+				set((state) => ({
+					categories: state.categories.filter((category) => category?.id !== categoryId),
+					todos: state.todos.map((todo) => (todo.category?.id === categoryId ? { ...todo, category: null } : todo)),
+				})),
 			updateTodoCategory: (todoId, categoryId) =>
 				set((state) => ({
 					todos: state.todos.map((todo) => (todo.id === todoId ? { ...todo, categoryId } : todo)),
-				})),
-			deleteTodoCategory: (categoryId: number) =>
-				set((state) => ({
-					todos: state.todos.filter((todo) => todo.category?.id !== categoryId),
 				})),
 		}),
 		{

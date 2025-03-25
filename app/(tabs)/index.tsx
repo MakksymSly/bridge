@@ -6,29 +6,64 @@ import Feather from '@expo/vector-icons/Feather';
 import { ITodo } from '@/types/ITodo';
 import NewTodoModal from '@/components/NewTodoModal';
 import TodoTile from '@/components/TodoTile';
-
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { Picker } from '@react-native-picker/picker';
+import Filter from '@/components/Filter';
 const homeEmptyImage = require('@/assets/images/home-empty.png');
 
 const App = () => {
 	const [isNewTodoModalVisible, setIsNewTodoModalVisible] = useState(false);
 	const todos = useStore((state) => state.todos);
-
+	const [selectedTodo, setSelectedTodo] = useState<ITodo | null>(null);
+	const [filter, setFilter] = useState('all');
 	const deleteTodo = useStore((state) => state.deleteTodo);
 	const toggleStatus = useStore((state) => state.toggleStatus);
+	const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
 
 	const handleLongPress = (todo: ITodo) => {
 		Alert.alert('extra actions', '', [
-			{ text: 'Delete', onPress: () => deleteTodo(todo.id), style: 'destructive' },
-			{ text: 'Edit', style: 'default' },
-			{ text: todo.completed ? 'Unmark as completed' : 'Mark as completed', onPress: () => toggleStatus(todo.id), style: 'default' },
+			{
+				text: 'Delete',
+				onPress: () => {
+					deleteTodo(todo.id);
+				},
+				style: 'destructive',
+			},
+			{
+				text: 'Edit',
+				style: 'default',
+				onPress: () => {
+					setIsNewTodoModalVisible(true);
+					setSelectedTodo(todo);
+				},
+			},
 			{ text: 'Отмена', style: 'cancel' },
 		]);
 	};
 
+	const filteredTodos = todos.filter((todo) => {
+		if (filter === 'all') {
+			return true;
+		} else if (filter === 'completed') {
+			return todo.completed === true;
+		} else if (filter === 'inProgress') {
+			return todo.completed === false;
+		} else if (filter === 'prioritized') {
+			return todos.sort((a, b) => (a.priority ?? 11) - (b.priority ?? 11));
+		} else if (filter === 'leastPrioritized') {
+			return todos.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+		} else if (filter === 'unprioritized') {
+			return todo.priority === null;
+		} else {
+			return false;
+		}
+	});
+
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
 			<View style={styles.content}>
-				{isNewTodoModalVisible ? <NewTodoModal setModalVisible={setIsNewTodoModalVisible} /> : null}
+				{isNewTodoModalVisible ? <NewTodoModal existingTodo={selectedTodo} setModalVisible={setIsNewTodoModalVisible} /> : null}
+				{isFilterModalVisible ? <Filter setModalVisible={setIsFilterModalVisible} filter={filter} setFilter={setFilter} /> : null}
 				{!todos.length ? (
 					<View style={styles.emptyHomeContainer}>
 						<Image style={styles.emptyHomeImage} source={homeEmptyImage} />
@@ -38,16 +73,32 @@ const App = () => {
 				) : (
 					<>
 						<View style={styles.todosContainer}>
+							<View style={styles.header}>
+								<TouchableOpacity onPress={() => setIsFilterModalVisible(true)}>
+									<Ionicons name="filter" size={28} color="black" />
+								</TouchableOpacity>
+							</View>
 							<ScrollView contentContainerStyle={styles.todosBlock} keyboardShouldPersistTaps="handled">
-								{todos.map((todo) => (
-									<TodoTile key={todo.id} todo={todo} handleLongPress={handleLongPress} />
+								{filteredTodos.map((todo) => (
+									<TodoTile
+										key={todo.id}
+										todo={todo}
+										handleLongPress={() => {
+											handleLongPress(todo);
+										}}
+									/>
 								))}
 							</ScrollView>
 						</View>
 					</>
 				)}
 			</View>
-			<TouchableOpacity onPress={() => setIsNewTodoModalVisible(true)} style={styles.addButton}>
+			<TouchableOpacity
+				onPress={() => {
+					setIsNewTodoModalVisible(true);
+					setSelectedTodo(null);
+				}}
+				style={styles.addButton}>
 				<Feather name="plus" size={24} color="white" />
 			</TouchableOpacity>
 		</GestureHandlerRootView>
@@ -57,6 +108,12 @@ const App = () => {
 export default App;
 
 const styles = StyleSheet.create({
+	header: {
+		display: 'flex',
+		paddingLeft: 20,
+		paddingRight: 20,
+		marginBottom: 30,
+	},
 	addButton: {
 		position: 'absolute',
 		bottom: Platform.OS === 'ios' ? 90 : 10,
@@ -75,10 +132,12 @@ const styles = StyleSheet.create({
 		shadowRadius: 4,
 	},
 	emptyHomeContainer: {
+		position: 'absolute',
 		display: 'flex',
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
+		top: 150,
 	},
 	emptyHomeImage: { width: 300, height: 300 },
 	content: {

@@ -9,5 +9,5 @@ export interface ITodo {
 	DateEdited?: string;
 	images?: string[];
 	category?: ICategory | null;
-	priority?: number;
+	priority?: number | null;
 }

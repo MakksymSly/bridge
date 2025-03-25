@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import React, { useState } from 'react';
 import { formatDate } from '@/utils/utils';
 import { useStore } from '@/store/store';
@@ -7,19 +7,25 @@ import Feather from '@expo/vector-icons/Feather';
 import Octicons from '@expo/vector-icons/Octicons';
 import NewCategoryModal from './NewCategoryModal';
 import { ICategory } from '@/types/ICategory';
+import { ITodo } from '@/types/ITodo';
+import NewPriority from './NewPriority';
 
 interface Props {
 	setModalVisible: (visible: boolean) => void;
+	existingTodo?: ITodo | null;
 }
 
-const NewTodoModal: React.FC<Props> = ({ setModalVisible }) => {
-	const [title, setTitle] = useState('');
-	const [description, setDescription] = useState('');
-	const [images, setImages] = useState<string[]>([]);
+const NewTodoModal: React.FC<Props> = (props) => {
+	const { setModalVisible, existingTodo } = props;
+	const [title, setTitle] = useState(existingTodo ? existingTodo.title : '');
+	const [description, setDescription] = useState(existingTodo ? existingTodo.description : '');
+	const [images, setImages] = useState<string[]>(existingTodo?.images && existingTodo.images.length > 0 ? existingTodo.images : []);
 	const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
 	const [isPriorityModalVisible, setPriorityModalVisible] = useState(false);
 	const addTodo = useStore((state) => state.addTodo);
-	const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(null);
+	const updateTodo = useStore((state) => state.updateTodo);
+	const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(existingTodo?.category ?? null);
+	const [selectedPriority, setSelectedPriority] = useState<number | null>(existingTodo?.priority ?? null);
 
 	const pickImage = async () => {
 		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -48,13 +54,18 @@ const NewTodoModal: React.FC<Props> = ({ setModalVisible }) => {
 			id: Date.now(),
 			title,
 			completed: false,
-			description: description.trim(),
+			description: (description || '').trim(),
 			DateCreated: formatDate(Date.now()),
-			images: images.length > 0 ? images : [''],
+			images: images.length > 0 ? images : [],
 			category: selectedCategory,
+			priority: selectedPriority,
 		};
 
-		addTodo(createdNewTodo);
+		if (!existingTodo) {
+			addTodo(createdNewTodo);
+		} else {
+			updateTodo(createdNewTodo, existingTodo.id);
+		}
 
 		setTitle('');
 		setDescription('');
@@ -65,6 +76,10 @@ const NewTodoModal: React.FC<Props> = ({ setModalVisible }) => {
 
 	const handleCategoryModalToggle = () => {
 		setCategoryModalVisible(!isCategoryModalVisible);
+	};
+
+	const handlePriorityModalToggle = () => {
+		setPriorityModalVisible(!isPriorityModalVisible);
 	};
 
 	const handleCancel = () => {
@@ -80,49 +95,55 @@ const NewTodoModal: React.FC<Props> = ({ setModalVisible }) => {
 
 	const isModalShown = !isCategoryModalVisible && !isPriorityModalVisible;
 	const isCategoryModalShown = isCategoryModalVisible && !isPriorityModalVisible;
+
 	return (
 		<View style={styles.overlay}>
 			{isModalShown && (
-				<View style={styles.container}>
-					<Text style={styles.title}>ADD TASK</Text>
-					<TextInput style={styles.input} placeholder="TASK TITLE*" placeholderTextColor="#888" value={title} onChangeText={setTitle} />
-					<TextInput style={styles.textArea} multiline numberOfLines={4} placeholder="TASK DESCRIPTION*" placeholderTextColor="#888" value={description} onChangeText={setDescription} />
-					<View style={styles.iconContainer}>
-						<TouchableOpacity style={styles.iconButton}>
-							<Feather name="flag" size={24} color="#fff" />
-						</TouchableOpacity>
-						<TouchableOpacity style={styles.iconButton} onPress={handleCategoryModalToggle}>
-							<Octicons name="versions" size={24} color={selectedCategory ? selectedCategory.color : '#fff'} />
-						</TouchableOpacity>
-					</View>
-					<TouchableOpacity style={styles.imageButton} onPress={pickImage}>
-						<Text style={styles.imageButtonText}>ADD IMAGE</Text>
-					</TouchableOpacity>
+				<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+					<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? -200 : -300} style={styles.keyboardAvoidingContainer}>
+						<View style={styles.container}>
+							<Text style={styles.title}>ADD TASK</Text>
+							<TextInput style={styles.input} placeholder="TASK TITLE*" placeholderTextColor="#888" value={title} onChangeText={setTitle} />
+							<TextInput style={styles.textArea} multiline numberOfLines={4} placeholder="TASK DESCRIPTION*" placeholderTextColor="#888" value={description} onChangeText={setDescription} />
+							<View style={styles.iconContainer}>
+								<TouchableOpacity style={styles.iconButton} onPress={handlePriorityModalToggle}>
+									{selectedPriority ? <Text style={styles.priorityText}>{selectedPriority}</Text> : <Feather name="flag" size={24} color="#fff" />}
+								</TouchableOpacity>
+								<TouchableOpacity style={styles.iconButton} onPress={handleCategoryModalToggle}>
+									<Octicons name="versions" size={24} color={selectedCategory ? selectedCategory.color : '#fff'} />
+								</TouchableOpacity>
+							</View>
+							<TouchableOpacity style={styles.imageButton} onPress={pickImage}>
+								<Text style={styles.imageButtonText}>ADD IMAGE</Text>
+							</TouchableOpacity>
 
-					{images.length > 0 && (
-						<ScrollView horizontal style={styles.previewContainer} showsHorizontalScrollIndicator={false}>
-							{images.map((img, index) => (
-								<View key={index} style={styles.previewWrapper}>
-									<TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
-										<Text style={styles.removeButtonText}>X</Text>
-									</TouchableOpacity>
-									<Image source={{ uri: img }} style={styles.imagePreview} resizeMode="cover" />
-								</View>
-							))}
-						</ScrollView>
-					)}
+							{images.length > 0 && (
+								<ScrollView horizontal style={styles.previewContainer} showsHorizontalScrollIndicator={false}>
+									{images.map((img, index) => (
+										<View key={index} style={styles.previewWrapper}>
+											<TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
+												<Text style={styles.removeButtonText}>X</Text>
+											</TouchableOpacity>
+											<Image source={{ uri: img }} style={styles.imagePreview} resizeMode="cover" />
+										</View>
+									))}
+								</ScrollView>
+							)}
 
-					<View style={styles.buttonContainer}>
-						<TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-							<Text style={styles.buttonText}>Cancel</Text>
-						</TouchableOpacity>
-						<TouchableOpacity style={styles.saveButton} onPress={handleAddTodo}>
-							<Text style={styles.buttonText}>Save</Text>
-						</TouchableOpacity>
-					</View>
-				</View>
+							<View style={styles.buttonContainer}>
+								<TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+									<Text style={styles.buttonText}>Cancel</Text>
+								</TouchableOpacity>
+								<TouchableOpacity style={styles.saveButton} onPress={handleAddTodo}>
+									<Text style={styles.buttonText}>Save</Text>
+								</TouchableOpacity>
+							</View>
+						</View>
+					</KeyboardAvoidingView>
+				</TouchableWithoutFeedback>
 			)}
 			{isCategoryModalShown && <NewCategoryModal handleCategoryModalToggle={handleCategoryModalToggle} setSelectedCategory={setSelectedCategory} />}
+			{isPriorityModalVisible && <NewPriority handlePriorityModalToggle={handlePriorityModalToggle} setSelectedPriority={setSelectedPriority} selectedPriority={selectedPriority} />}
 		</View>
 	);
 };
@@ -130,7 +151,7 @@ const NewTodoModal: React.FC<Props> = ({ setModalVisible }) => {
 const styles = StyleSheet.create({
 	overlay: {
 		position: 'absolute',
-		top: 0,
+		top: -200,
 		left: 0,
 		right: 0,
 		bottom: 0,
@@ -139,13 +160,16 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		zIndex: 1,
 	},
+	keyboardAvoidingContainer: {
+		width: '100%',
+		alignItems: 'center',
+	},
 	container: {
 		backgroundColor: '#363636',
 		padding: 20,
 		borderRadius: 15,
 		width: '90%',
-		maxHeight: '80%',
-		top: -150,
+		maxHeight: '100%',
 	},
 	title: {
 		color: '#fff',
@@ -244,7 +268,7 @@ const styles = StyleSheet.create({
 		gap: 10,
 	},
 	cancelButton: {
-		backgroundColor: '#666',
+		backgroundColor: '#FF4F4F',
 		paddingVertical: 12,
 		borderRadius: 10,
 		alignItems: 'center',
@@ -261,6 +285,11 @@ const styles = StyleSheet.create({
 		color: '#fff',
 		fontSize: 18,
 		fontWeight: '600',
+	},
+	priorityText: {
+		color: '#fff',
+		fontSize: 22,
+		fontWeight: '800',
 	},
 });
 

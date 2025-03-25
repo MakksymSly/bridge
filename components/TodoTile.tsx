@@ -38,10 +38,12 @@ const TodoTile: React.FC<Props> = (props) => {
 							<Text style={styles.todoItemCategoryText}>{todo.category?.name}</Text>
 						</View>
 					)}
-					<View style={styles.todoItemPriorityContainer}>
-						<Ionicons name="flag-outline" size={24} color="#8687E7" />
-						<Text style={styles.todoItemPriorityText}>1</Text>
-					</View>
+					{todo.priority && (
+						<View style={styles.todoItemPriorityContainer}>
+							<Ionicons name="flag-outline" size={24} color="#8687E7" />
+							<Text style={styles.todoItemPriorityText}>{todo.priority}</Text>
+						</View>
+					)}
 				</View>
 			</TouchableOpacity>
 		</Link>
