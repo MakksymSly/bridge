@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import React from 'react';
 import { ICategory } from '@/types/ICategory';
 import { useStore } from '@/store/store';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	category: ICategory;
@@ -9,20 +10,21 @@ interface Props {
 }
 
 const Category: React.FC<Props> = ({ category, handleChoseCategory }) => {
+	const { t } = useTranslation();
 	const deleteCategory = useStore((state) => state.deleteTodoCategory);
 	const categoryExists = useStore((state) => state.categories.some((c) => c.id === category.id));
 
 	const handleLongPress = () => {
 		Alert.alert('Actions', '', [
 			{
-				text: 'Delete',
+				text: `${t('delete')}`,
 				style: 'destructive',
 				onPress: () => {
 					deleteCategory(category.id);
 				},
 			},
-			{ text: 'Edit', style: 'default' },
-			{ text: 'Cancel', style: 'cancel' },
+			{ text: `${t('edit')}`, style: 'default' },
+			{ text: `${t('cancel')}`, style: 'cancel' },
 		]);
 	};
 

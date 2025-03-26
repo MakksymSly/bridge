@@ -1,7 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import React from 'react';
 import { Link } from 'expo-router';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { ITodo } from '@/types/ITodo';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import { useStore } from '@/store/store';

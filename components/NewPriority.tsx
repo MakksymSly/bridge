@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import React from 'react';
 import Priority from './Priority';
 import { Priorities } from '../constants/Priorities';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	handlePriorityModalToggle: () => void;
@@ -10,6 +11,7 @@ interface Props {
 }
 
 const NewPriority: React.FC<Props> = ({ handlePriorityModalToggle, setSelectedPriority, selectedPriority }) => {
+	const { t } = useTranslation();
 	return (
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -20,7 +22,7 @@ const NewPriority: React.FC<Props> = ({ handlePriorityModalToggle, setSelectedPr
 				</View>
 			</ScrollView>
 			<TouchableOpacity style={styles.cancelButton} onPress={handlePriorityModalToggle}>
-				<Text style={styles.cancelText}>CANCEL</Text>
+				<Text style={styles.cancelText}>{t('cancel')}</Text>
 			</TouchableOpacity>
 		</View>
 	);

@@ -4,8 +4,10 @@ import { useLocalSearchParams } from 'expo-router';
 import { useStore } from '@/store/store';
 import { ITodo } from '@/types/ITodo';
 import Category from '@/components/Category';
+import { useTranslation } from 'react-i18next';
 
 const id = () => {
+	const { t } = useTranslation();
 	const params = useLocalSearchParams();
 	const todos = useStore((state) => state.todos);
 	const [currentTodo, setCurrentTodo] = useState<ITodo>({
@@ -48,7 +50,7 @@ const id = () => {
 				<View style={styles.todoCard}>
 					<Text style={styles.title}>{currentTodo.title}</Text>
 					<View style={styles.detailContainer}>
-						<Text style={styles.label}>Details:</Text>
+						<Text style={styles.label}>{t('description')}:</Text>
 						<Text style={styles.description}>{currentTodo.description}</Text>
 					</View>
 					<View style={styles.infoRow}>
@@ -62,16 +64,16 @@ const id = () => {
 					</View>
 					<View style={styles.separator}></View>
 					<View style={styles.infoRow}>
-						<Text style={styles.value}>{currentTodo.category ? <Category category={currentTodo.category} handleChoseCategory={() => {}} /> : 'N/A'}</Text>
+						<Text style={styles.value}>{currentTodo.category ? <Category category={currentTodo.category} handleChoseCategory={() => {}} /> : 'Uncategorized'}</Text>
 					</View>
 					<View style={styles.separator}></View>
 					<View style={styles.infoRow}>
-						<Text style={styles.label}>Date:</Text>
+						<Text style={styles.label}>{t('date')}:</Text>
 						<Text style={styles.value}>{currentTodo.DateCreated}</Text>
 					</View>
 					<View style={styles.infoRow}>
-						<Text style={styles.label}>Completed:</Text>
-						<Text style={[styles.value, { color: currentTodo.completed ? '#00cc00' : '#ff4444' }]}>{currentTodo.completed ? 'Yes' : 'No'}</Text>
+						<Text style={styles.label}>{t('completed')}:</Text>
+						<Text style={[styles.value, { color: currentTodo.completed ? '#00cc00' : '#ff4444' }]}>{currentTodo.completed ? `${t('yes')}` : `${t('no')}`}</Text>
 					</View>
 					<View style={styles.infoRow}>
 						<Text style={styles.label}>ID:</Text>

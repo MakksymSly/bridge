@@ -8,10 +8,11 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
+import { useTranslation } from 'react-i18next';
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
-
+	const { t } = useTranslation();
 	return (
 		<Tabs
 			screenOptions={{
@@ -30,7 +31,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="index"
 				options={{
-					title: 'List',
+					title: `${t('list')}`,
 					tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
 				}}
 			/>
@@ -38,7 +39,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="settings"
 				options={{
-					title: 'Settings',
+					title: `${t('settings')}`,
 					tabBarIcon: ({ color }) => <EvilIcons name="gear" size={24} color={color} />,
 				}}
 			/>

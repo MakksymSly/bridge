@@ -7,9 +7,11 @@ import { ITodo } from '@/types/ITodo';
 import NewTodoModal from '@/components/NewTodoModal';
 import TodoTile from '@/components/TodoTile';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Picker } from '@react-native-picker/picker';
 import Filter from '@/components/Filter';
 const homeEmptyImage = require('@/assets/images/home-empty.png');
+import { useTranslation } from 'react-i18next';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '@/i18n';
 
 const App = () => {
 	const [isNewTodoModalVisible, setIsNewTodoModalVisible] = useState(false);
@@ -17,27 +19,26 @@ const App = () => {
 	const [selectedTodo, setSelectedTodo] = useState<ITodo | null>(null);
 	const [filter, setFilter] = useState('all');
 	const deleteTodo = useStore((state) => state.deleteTodo);
-	const toggleStatus = useStore((state) => state.toggleStatus);
+	const { t } = useTranslation();
 	const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
-
 	const handleLongPress = (todo: ITodo) => {
 		Alert.alert('extra actions', '', [
 			{
-				text: 'Delete',
+				text: `${t('delete')}`,
 				onPress: () => {
 					deleteTodo(todo.id);
 				},
 				style: 'destructive',
 			},
 			{
-				text: 'Edit',
+				text: `${t('edit')}`,
 				style: 'default',
 				onPress: () => {
 					setIsNewTodoModalVisible(true);
 					setSelectedTodo(todo);
 				},
 			},
-			{ text: 'Отмена', style: 'cancel' },
+			{ text: `${t('cancel')}`, style: 'cancel' },
 		]);
 	};
 
@@ -60,48 +61,56 @@ const App = () => {
 	});
 
 	return (
-		<GestureHandlerRootView style={{ flex: 1 }}>
-			<View style={styles.content}>
-				{isNewTodoModalVisible ? <NewTodoModal existingTodo={selectedTodo} setModalVisible={setIsNewTodoModalVisible} /> : null}
-				{isFilterModalVisible ? <Filter setModalVisible={setIsFilterModalVisible} filter={filter} setFilter={setFilter} /> : null}
-				{!todos.length ? (
-					<View style={styles.emptyHomeContainer}>
-						<Image style={styles.emptyHomeImage} source={homeEmptyImage} />
-						<Text style={styles.emptyHomeText}>What do you want to do today?</Text>
-						<Text style={styles.emptyHomeSubText}>Tap + to add your tasks</Text>
-					</View>
-				) : (
-					<>
-						<View style={styles.todosContainer}>
-							<View style={styles.header}>
-								<TouchableOpacity onPress={() => setIsFilterModalVisible(true)}>
-									<Ionicons name="filter" size={28} color="black" />
-								</TouchableOpacity>
-							</View>
-							<ScrollView contentContainerStyle={styles.todosBlock} keyboardShouldPersistTaps="handled">
-								{filteredTodos.map((todo) => (
-									<TodoTile
-										key={todo.id}
-										todo={todo}
-										handleLongPress={() => {
-											handleLongPress(todo);
-										}}
-									/>
-								))}
-							</ScrollView>
+		<I18nextProvider i18n={i18n}>
+			<GestureHandlerRootView style={{ flex: 1 }}>
+				<View style={styles.content}>
+					{isNewTodoModalVisible ? <NewTodoModal existingTodo={selectedTodo} setModalVisible={setIsNewTodoModalVisible} /> : null}
+					{isFilterModalVisible ? <Filter setModalVisible={setIsFilterModalVisible} filter={filter} setFilter={setFilter} /> : null}
+					{filteredTodos.length === 0 && (
+						<View style={styles.emptyHomeContainer}>
+							<Image style={styles.emptyHomeImage} source={homeEmptyImage} />
+							<Text style={styles.emptyHomeText}>{t('emptyList')}</Text>
 						</View>
-					</>
-				)}
-			</View>
-			<TouchableOpacity
-				onPress={() => {
-					setIsNewTodoModalVisible(true);
-					setSelectedTodo(null);
-				}}
-				style={styles.addButton}>
-				<Feather name="plus" size={24} color="white" />
-			</TouchableOpacity>
-		</GestureHandlerRootView>
+					)}
+					{!todos.length ? (
+						<View style={styles.emptyHomeContainer}>
+							<Image style={styles.emptyHomeImage} source={homeEmptyImage} />
+							<Text style={styles.emptyHomeText}>{t('emptyIndexTextOne')}</Text>
+							<Text style={styles.emptyHomeSubText}>{t('emptyIndexTextTwo')}</Text>
+						</View>
+					) : (
+						<>
+							<View style={styles.todosContainer}>
+								<View style={styles.header}>
+									<TouchableOpacity onPress={() => setIsFilterModalVisible(true)}>
+										<Ionicons name="filter" size={28} color="black" />
+									</TouchableOpacity>
+								</View>
+								<ScrollView contentContainerStyle={styles.todosBlock} keyboardShouldPersistTaps="handled">
+									{filteredTodos.map((todo) => (
+										<TodoTile
+											key={todo.id}
+											todo={todo}
+											handleLongPress={() => {
+												handleLongPress(todo);
+											}}
+										/>
+									))}
+								</ScrollView>
+							</View>
+						</>
+					)}
+				</View>
+				<TouchableOpacity
+					onPress={() => {
+						setIsNewTodoModalVisible(true);
+						setSelectedTodo(null);
+					}}
+					style={styles.addButton}>
+					<Feather name="plus" size={24} color="white" />
+				</TouchableOpacity>
+			</GestureHandlerRootView>
+		</I18nextProvider>
 	);
 };
 

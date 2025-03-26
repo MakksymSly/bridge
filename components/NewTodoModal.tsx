@@ -9,6 +9,7 @@ import NewCategoryModal from './NewCategoryModal';
 import { ICategory } from '@/types/ICategory';
 import { ITodo } from '@/types/ITodo';
 import NewPriority from './NewPriority';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	setModalVisible: (visible: boolean) => void;
@@ -22,6 +23,7 @@ const NewTodoModal: React.FC<Props> = (props) => {
 	const [images, setImages] = useState<string[]>(existingTodo?.images && existingTodo.images.length > 0 ? existingTodo.images : []);
 	const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
 	const [isPriorityModalVisible, setPriorityModalVisible] = useState(false);
+	const [titleError, setTitleError] = useState(false); // Добавлено состояние для ошибки
 	const addTodo = useStore((state) => state.addTodo);
 	const updateTodo = useStore((state) => state.updateTodo);
 	const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(existingTodo?.category ?? null);
@@ -48,7 +50,12 @@ const NewTodoModal: React.FC<Props> = (props) => {
 	};
 
 	const handleAddTodo = () => {
-		if (!title.trim()) return;
+		if (!title.trim()) {
+			setTitleError(true);
+			return;
+		}
+
+		setTitleError(false);
 
 		const createdNewTodo = {
 			id: Date.now(),
@@ -74,6 +81,13 @@ const NewTodoModal: React.FC<Props> = (props) => {
 		setSelectedCategory(null);
 	};
 
+	const handleTitleChange = (text: string) => {
+		setTitle(text);
+		if (text.trim()) {
+			setTitleError(false); // Сбрасываем ошибку при вводе текста
+		}
+	};
+
 	const handleCategoryModalToggle = () => {
 		setCategoryModalVisible(!isCategoryModalVisible);
 	};
@@ -87,11 +101,14 @@ const NewTodoModal: React.FC<Props> = (props) => {
 		setDescription('');
 		setImages([]);
 		setModalVisible(false);
+		setTitleError(false); // Сбрасываем ошибку при отмене
 	};
 
 	const removeImage = (index: number) => {
 		setImages((prevImages) => prevImages.filter((_, i) => i !== index));
 	};
+
+	const { t } = useTranslation();
 
 	const isModalShown = !isCategoryModalVisible && !isPriorityModalVisible;
 	const isCategoryModalShown = isCategoryModalVisible && !isPriorityModalVisible;
@@ -102,9 +119,18 @@ const NewTodoModal: React.FC<Props> = (props) => {
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 					<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? -200 : -300} style={styles.keyboardAvoidingContainer}>
 						<View style={styles.container}>
-							<Text style={styles.title}>ADD TASK</Text>
-							<TextInput style={styles.input} placeholder="TASK TITLE*" placeholderTextColor="#888" value={title} onChangeText={setTitle} />
-							<TextInput style={styles.textArea} multiline numberOfLines={4} placeholder="TASK DESCRIPTION*" placeholderTextColor="#888" value={description} onChangeText={setDescription} />
+							<Text style={styles.title}>{t('addTask')}</Text>
+							<TextInput
+								style={[styles.input, titleError && styles.inputError]} // Добавляем стиль ошибки
+								placeholder={t('taskTitle')}
+								placeholderTextColor="#888"
+								value={title}
+								onChangeText={handleTitleChange} // Используем новый обработчик
+							/>
+							{titleError && (
+								<Text style={styles.errorText}>{t('todoTitleEmptyError')}</Text> // Сообщение об ошибке
+							)}
+							<TextInput style={styles.textArea} multiline numberOfLines={4} placeholder={t('taskDescription')} placeholderTextColor="#888" value={description} onChangeText={setDescription} />
 							<View style={styles.iconContainer}>
 								<TouchableOpacity style={styles.iconButton} onPress={handlePriorityModalToggle}>
 									{selectedPriority ? <Text style={styles.priorityText}>{selectedPriority}</Text> : <Feather name="flag" size={24} color="#fff" />}
@@ -114,7 +140,7 @@ const NewTodoModal: React.FC<Props> = (props) => {
 								</TouchableOpacity>
 							</View>
 							<TouchableOpacity style={styles.imageButton} onPress={pickImage}>
-								<Text style={styles.imageButtonText}>ADD IMAGE</Text>
+								<Text style={styles.imageButtonText}>{t('addImage')}</Text>
 							</TouchableOpacity>
 
 							{images.length > 0 && (
@@ -132,10 +158,10 @@ const NewTodoModal: React.FC<Props> = (props) => {
 
 							<View style={styles.buttonContainer}>
 								<TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-									<Text style={styles.buttonText}>Cancel</Text>
+									<Text style={styles.buttonText}>{t('cancel')}</Text>
 								</TouchableOpacity>
 								<TouchableOpacity style={styles.saveButton} onPress={handleAddTodo}>
-									<Text style={styles.buttonText}>Save</Text>
+									<Text style={styles.buttonText}>{t('save')}</Text>
 								</TouchableOpacity>
 							</View>
 						</View>
@@ -186,6 +212,16 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		marginBottom: 15,
 		fontSize: 16,
+	},
+	inputError: {
+		borderWidth: 2,
+		borderColor: '#FF4F4F', // Красная рамка при ошибке
+		marginBottom: 5,
+	},
+	errorText: {
+		color: '#FF4F4F',
+		fontSize: 12,
+		marginBottom: 10,
 	},
 	textArea: {
 		backgroundColor: '#4A4A4A',

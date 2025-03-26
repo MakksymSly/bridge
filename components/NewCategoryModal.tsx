@@ -6,6 +6,7 @@ import Category from './Category';
 import { useStore } from '@/store/store';
 import { ICategory } from '@/types/ICategory';
 import CategoryCreator from './CategoryCreator';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	handleCategoryModalToggle: () => void;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const NewCategoryModal: React.FC<Props> = (props) => {
+	const { t } = useTranslation();
 	const { handleCategoryModalToggle, setSelectedCategory } = props;
 	const categories = useStore((state) => state.categories);
 	const [isCreationModalVisible, setIsCreationModalVisible] = React.useState(false);
@@ -42,7 +44,7 @@ const NewCategoryModal: React.FC<Props> = (props) => {
 				</View>
 			</ScrollView>
 			<TouchableOpacity style={styles.cancelButton} onPress={handleCategoryModalToggle}>
-				<Text style={styles.priorityText}>CANCEL</Text>
+				<Text style={styles.priorityText}>{t('cancel')}</Text>
 			</TouchableOpacity>
 		</View>
 	) : (

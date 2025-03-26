@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	filter: string;
@@ -9,23 +10,24 @@ interface Props {
 }
 
 const Filter: React.FC<Props> = ({ filter, setFilter, setModalVisible }) => {
+	const { t } = useTranslation();
 	return (
 		<Modal transparent animationType="fade">
 			<View style={styles.overlay}>
 				<View style={styles.modalContainer}>
-					<Text style={styles.title}>Select Filter</Text>
+					<Text style={styles.title}>{t('selectFilter')}</Text>
 
 					<Picker selectedValue={filter} onValueChange={(itemValue) => setFilter(itemValue)} style={styles.picker}>
-						<Picker.Item label="All" value="all" />
-						<Picker.Item label="Completed" value="completed" />
-						<Picker.Item label="In Progress" value="inProgress" />
-						<Picker.Item label="Most Prioritized" value="prioritized" />
-						<Picker.Item label="Least Prioritized" value="leastPrioritized" />
-						<Picker.Item label="Unprioritized" value="unprioritized" />
+						<Picker.Item label={t('all')} value="all" />
+						<Picker.Item label={t('completed')} value="completed" />
+						<Picker.Item label={t('inProgress')} value="inProgress" />
+						<Picker.Item label={t('mostPrioritized')} value="prioritized" />
+						<Picker.Item label={t('leastPrioritized')} value="leastPrioritized" />
+						<Picker.Item label={t('unprioritized')} value="unprioritized" />
 					</Picker>
 
 					<TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-						<Text style={styles.closeText}>Close</Text>
+						<Text style={styles.closeText}>{t('close')}</Text>
 					</TouchableOpacity>
 				</View>
 			</View>

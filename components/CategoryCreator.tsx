@@ -3,12 +3,15 @@ import React, { useState } from 'react';
 import { TextInput } from 'react-native-gesture-handler';
 import { useStore } from '@/store/store';
 import { Icons, Colors } from '@/constants/IconsAndColors';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
 	setIsCreationModalVisible: (value: boolean) => void;
 }
 
 const CategoryCreator: React.FC<Props> = ({ setIsCreationModalVisible }) => {
+	const { t } = useTranslation();
+
 	const icons = Icons;
 	const colors = Colors;
 	const [icon, setIcon] = useState<string>('💼');
@@ -24,7 +27,7 @@ const CategoryCreator: React.FC<Props> = ({ setIsCreationModalVisible }) => {
 
 	const handleAddCategory = () => {
 		if (category.trim() === '') {
-			setError('Category name cannot be empty');
+			setError(`${t('categoryNameCannotBeEmpty')}`);
 			return;
 		}
 		addCategory(category, icon, color);
@@ -34,10 +37,10 @@ const CategoryCreator: React.FC<Props> = ({ setIsCreationModalVisible }) => {
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 			<View style={styles.container}>
-				<Text style={styles.label}>CATEGORY NAME</Text>
+				<Text style={styles.label}>{t('categoryName')}</Text>
 				<TextInput
 					style={[styles.input, error ? styles.inputError : null]}
-					placeholder="Enter category name"
+					placeholder={t('enterCategoryName')}
 					placeholderTextColor="#999"
 					value={category}
 					onChangeText={(text) => {
@@ -47,7 +50,7 @@ const CategoryCreator: React.FC<Props> = ({ setIsCreationModalVisible }) => {
 				/>
 				{error && <Text style={styles.errorText}>{error}</Text>}
 
-				<Text style={styles.label}>CATEGORY ICON</Text>
+				<Text style={styles.label}>{t('categoryIcon')}</Text>
 				<View style={styles.iconContainer}>
 					{icons.map((item) => (
 						<TouchableOpacity key={item} style={[styles.iconBox, icon === item && styles.selectedIcon]} onPress={() => setIcon(item)}>
@@ -56,7 +59,7 @@ const CategoryCreator: React.FC<Props> = ({ setIsCreationModalVisible }) => {
 					))}
 				</View>
 
-				<Text style={styles.label}>CATEGORY COLOR</Text>
+				<Text style={styles.label}>{t('categoryColor')}</Text>
 				<View style={styles.colorContainer}>
 					{colors.map((col) => (
 						<TouchableOpacity key={col} style={[styles.colorBox, { backgroundColor: col }, color === col && styles.selectedColor]} onPress={() => setColor(col)} />
@@ -64,10 +67,10 @@ const CategoryCreator: React.FC<Props> = ({ setIsCreationModalVisible }) => {
 				</View>
 
 				<TouchableOpacity style={[styles.button, { backgroundColor: '#8687E7' }]} onPress={handleAddCategory}>
-					<Text style={styles.buttonText}>ADD</Text>
+					<Text style={styles.buttonText}>{t('add')}</Text>
 				</TouchableOpacity>
 				<TouchableOpacity style={[styles.button, { backgroundColor: '#FF4F4F' }]} onPress={handleModalClose}>
-					<Text style={styles.buttonText}>CANCEL</Text>
+					<Text style={styles.buttonText}>{t('cancel')}</Text>
 				</TouchableOpacity>
 			</View>
 		</TouchableWithoutFeedback>
