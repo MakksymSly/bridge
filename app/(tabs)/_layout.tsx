@@ -1,19 +1,15 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
-
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
-
 import EvilIcons from '@expo/vector-icons/EvilIcons';
-import { useTranslation } from 'react-i18next';
 import { CustomDarkTheme } from '@/themes/CustomDarkTheme';
 import { CustomLightTheme } from '@/themes/CustomLightTheme';
 import { useStore } from '@/store/store';
 
 export default function TabLayout() {
-	const { t } = useTranslation();
 	const theme = useStore((state) => state.currentTheme);
 	return (
 		<Tabs
@@ -36,16 +32,16 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="index"
 				options={{
-					title: `${t('list')}`,
-					tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+					title: ``,
+					tabBarIcon: ({ color }) => <IconSymbol size={38} name="house.fill" color={color} />,
 				}}
 			/>
 
 			<Tabs.Screen
 				name="settings"
 				options={{
-					title: `${t('settings')}`,
-					tabBarIcon: ({ color }) => <EvilIcons name="gear" size={24} color={color} />,
+					title: ``,
+					tabBarIcon: ({ color }) => <EvilIcons name="gear" size={34} color={color} />,
 				}}
 			/>
 		</Tabs>
