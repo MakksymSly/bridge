@@ -18,7 +18,7 @@ interface Props {
 
 const NewTodoModal: React.FC<Props> = (props) => {
 	const { setModalVisible, existingTodo } = props;
-	const theme = useStore((state) => state.currentTheme); // Добавляем получение темы
+	const theme = useStore((state) => state.currentTheme);
 	const [title, setTitle] = useState(existingTodo ? existingTodo.title : '');
 	const [description, setDescription] = useState(existingTodo ? existingTodo.description : '');
 	const [images, setImages] = useState<string[]>(existingTodo?.images && existingTodo.images.length > 0 ? existingTodo.images : []);
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
 	},
 	inputError: {
 		borderWidth: 2,
-		borderColor: '#FF4F4F', // Оставляем как есть или можем заменить на theme.colors.notification
+		borderColor: '#FF4F4F',
 	},
 	errorText: {
 		fontSize: 12,

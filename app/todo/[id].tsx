@@ -74,13 +74,7 @@ const id = () => {
 					</View>
 					<View style={styles.infoRow}>
 						<Text style={[styles.label, { color: theme.colors.text }]}>{t('completed')}:</Text>
-						<Text
-							style={[
-								styles.value,
-								{ color: currentTodo.completed ? '#00cc00' : theme.colors.notification }, // Оставляем зелёный для "yes", используем notification для "no"
-							]}>
-							{currentTodo.completed ? `${t('yes')}` : `${t('no')}`}
-						</Text>
+						<Text style={[styles.value, { color: currentTodo.completed ? '#00cc00' : theme.colors.notification }]}>{currentTodo.completed ? `${t('yes')}` : `${t('no')}`}</Text>
 					</View>
 					<View style={styles.infoRow}>
 						<Text style={[styles.label, { color: theme.colors.text }]}>ID:</Text>

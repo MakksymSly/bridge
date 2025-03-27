@@ -17,7 +17,7 @@ const NewCategoryModal: React.FC<Props> = (props) => {
 	const { t } = useTranslation();
 	const { handleCategoryModalToggle, setSelectedCategory } = props;
 	const categories = useStore((state) => state.categories);
-	const theme = useStore((state) => state.currentTheme); // Добавляем получение темы
+	const theme = useStore((state) => state.currentTheme);
 	const [isCreationModalVisible, setIsCreationModalVisible] = React.useState(false);
 
 	const handleChoseCategory = (category: ICategory) => {

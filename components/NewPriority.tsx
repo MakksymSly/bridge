@@ -13,7 +13,7 @@ interface Props {
 
 const NewPriority: React.FC<Props> = ({ handlePriorityModalToggle, setSelectedPriority, selectedPriority }) => {
 	const { t } = useTranslation();
-	const theme = useStore((state) => state.currentTheme); // Добавляем получение темы
+	const theme = useStore((state) => state.currentTheme);
 
 	return (
 		<View style={[styles.container, { backgroundColor: theme.colors.card }]}>

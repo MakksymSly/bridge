@@ -13,7 +13,7 @@ const Category: React.FC<Props> = ({ category, handleChoseCategory }) => {
 	const { t } = useTranslation();
 	const deleteCategory = useStore((state) => state.deleteTodoCategory);
 	const categoryExists = useStore((state) => state.categories.some((c) => c.id === category.id));
-	const theme = useStore((state) => state.currentTheme); // Добавляем получение темы
+	const theme = useStore((state) => state.currentTheme);
 
 	const handleLongPress = () => {
 		Alert.alert('Actions', '', [

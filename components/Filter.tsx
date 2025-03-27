@@ -12,7 +12,7 @@ interface Props {
 
 const Filter: React.FC<Props> = ({ filter, setFilter, setModalVisible }) => {
 	const { t } = useTranslation();
-	const theme = useStore((state) => state.currentTheme); // Добавляем получение темы
+	const theme = useStore((state) => state.currentTheme);
 
 	return (
 		<Modal transparent animationType="fade">

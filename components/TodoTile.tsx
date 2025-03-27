@@ -29,11 +29,7 @@ const TodoTile: React.FC<Props> = (props) => {
 					}}
 				/>
 				<View style={styles.todoItemTextContainer}>
-					<Text
-						numberOfLines={1}
-						ellipsizeMode="tail"
-						style={[styles.todoItemText, { color: theme.colors.text, textDecorationLine: todo.completed ? 'line-through' : 'none' }]} // Используем цвет из темы
-					>
+					<Text numberOfLines={1} ellipsizeMode="tail" style={[styles.todoItemText, { color: theme.colors.text, textDecorationLine: todo.completed ? 'line-through' : 'none' }]}>
 						{todo.title}
 					</Text>
 					<Text style={[styles.todoItemSubText, { color: theme.colors.text }]}>{todo.DateCreated}</Text>
