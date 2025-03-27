@@ -13,21 +13,22 @@ const LanguageModal: React.FC<Props> = (props) => {
 	const { setModalVisible } = props;
 	const language = useStore((state) => state.language);
 	const setLanguage = useStore((state) => state.setLanguage);
+	const theme = useStore((state) => state.currentTheme);
 
 	return (
 		<Modal transparent animationType="fade">
-			<View style={styles.overlay}>
-				<View style={styles.modalContainer}>
-					<Text style={styles.title}>{t('selectLanguage')}</Text>
+			<View style={[styles.overlay, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
+				<View style={[styles.modalContainer, { backgroundColor: theme.colors.card }]}>
+					<Text style={[styles.title, { color: theme.colors.text }]}>{t('selectLanguage')}</Text>
 					<View style={styles.optionContainer}>
-						<Picker selectedValue={language} onValueChange={(itemValue) => setLanguage(itemValue)} style={styles.picker}>
+						<Picker selectedValue={language} onValueChange={(itemValue) => setLanguage(itemValue)} style={[styles.picker, { backgroundColor: theme.colors.background, color: theme.colors.text }]}>
 							<Picker.Item label="English" value="en" />
 							<Picker.Item label="Ukrainian" value="ua" />
 							<Picker.Item label="Русский" value="ru" />
 						</Picker>
 					</View>
-					<TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible('language')}>
-						<Text style={styles.buttonText}>{t('close')}</Text>
+					<TouchableOpacity style={[styles.closeButton, { backgroundColor: theme.colors.notification }]} onPress={() => setModalVisible('language')}>
+						<Text style={[styles.buttonText, { color: theme.colors.text }]}>{t('close')}</Text>
 					</TouchableOpacity>
 				</View>
 			</View>
@@ -38,19 +39,16 @@ const LanguageModal: React.FC<Props> = (props) => {
 const styles = StyleSheet.create({
 	overlay: {
 		flex: 1,
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
 	modalContainer: {
-		backgroundColor: '#363636',
 		width: '80%',
 		padding: 20,
 		borderRadius: 15,
 		alignItems: 'center',
 	},
 	title: {
-		color: '#fff',
 		fontSize: 20,
 		fontWeight: 'bold',
 		marginBottom: 15,
@@ -61,19 +59,15 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	picker: {
-		backgroundColor: '#4A4A4A',
-		color: '#fff',
 		borderRadius: 10,
 	},
 	closeButton: {
-		backgroundColor: '#FF4F4F',
 		paddingVertical: 10,
 		paddingHorizontal: 20,
 		borderRadius: 10,
 		alignItems: 'center',
 	},
 	buttonText: {
-		color: '#fff',
 		fontSize: 18,
 		fontWeight: '600',
 	},

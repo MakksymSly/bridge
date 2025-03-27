@@ -5,12 +5,14 @@ import ThemeModal from '@/components/ThemeModal';
 import Feather from '@expo/vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
+import { useStore } from '@/store/store';
 
 const Settings = () => {
 	const { t } = useTranslation();
 	const [isClearModalVisible, setIsClearModalVisible] = useState(false);
 	const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
 	const [isThemeModalVisible, setIsThemeModalVisible] = useState(false);
+	const theme = useStore((state) => state.currentTheme);
 
 	const handleModalVisible = (name: string) => {
 		switch (name) {
@@ -35,43 +37,43 @@ const Settings = () => {
 	};
 
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, { backgroundColor: theme.colors.background }]}>
 			{isLanguageModalVisible && <LanguageModal setModalVisible={handleModalVisible} />}
 			{isThemeModalVisible && <ThemeModal setModalVisible={handleModalVisible} />}
 
-			<Text style={styles.header}>{t('settings')}</Text>
+			<Text style={[styles.header, { color: theme.colors.text }]}>{t('settings')}</Text>
 
-			<TouchableOpacity style={styles.optionButton} onPress={() => handleModalVisible('theme')}>
-				<Feather name="moon" size={24} color="#fff" />
-				<Text style={styles.optionText}>{t('choseTheme')}</Text>
+			<TouchableOpacity style={[styles.optionButton, { backgroundColor: theme.colors.card }]} onPress={() => handleModalVisible('theme')}>
+				<Feather name="moon" size={24} color={theme.colors.text} />
+				<Text style={[styles.optionText, { color: theme.colors.text }]}>{t('choseTheme')}</Text>
 			</TouchableOpacity>
 
-			<TouchableOpacity style={styles.optionButton} onPress={() => handleModalVisible('language')}>
-				<Feather name="globe" size={24} color="#fff" />
-				<Text style={styles.optionText}>{t('choseLanguage')}</Text>
+			<TouchableOpacity style={[styles.optionButton, { backgroundColor: theme.colors.card }]} onPress={() => handleModalVisible('language')}>
+				<Feather name="globe" size={24} color={theme.colors.text} />
+				<Text style={[styles.optionText, { color: theme.colors.text }]}>{t('choseLanguage')}</Text>
 			</TouchableOpacity>
 
-			<TouchableOpacity style={styles.clearButton} onPress={() => handleModalVisible('clear')}>
-				<Feather name="trash-2" size={24} color="#fff" />
-				<Text style={styles.buttonText}>{t('clearStorage')}</Text>
+			<TouchableOpacity style={[styles.clearButton, { backgroundColor: theme.colors.notification }]} onPress={() => handleModalVisible('clear')}>
+				<Feather name="trash-2" size={24} color={theme.colors.text} />
+				<Text style={[styles.buttonText, { color: theme.colors.text }]}>{t('clearStorage')}</Text>
 			</TouchableOpacity>
 
 			<Modal transparent visible={isClearModalVisible} animationType="fade">
 				<View style={styles.modalOverlay}>
-					<View style={styles.modalContainer}>
-						<Text style={styles.modalTitle}>{t('clearStorageConfirm')}</Text>
-						<Text style={styles.modalMessage}>{t('clearStorageMessage')}</Text>
+					<View style={[styles.modalContainer, { backgroundColor: theme.colors.card }]}>
+						<Text style={[styles.modalTitle, { color: theme.colors.text }]}>{t('clearStorageConfirm')}</Text>
+						<Text style={[styles.modalMessage, { color: theme.colors.text }]}>{t('clearStorageMessage')}</Text>
 						<View style={styles.modalButtonContainer}>
-							<TouchableOpacity style={styles.modalCancelButton} onPress={() => handleModalVisible('clear')}>
-								<Text style={styles.buttonText}>Cancel</Text>
+							<TouchableOpacity style={[styles.modalCancelButton, { backgroundColor: theme.colors.border }]} onPress={() => handleModalVisible('clear')}>
+								<Text style={[styles.buttonText, { color: theme.colors.text }]}>Cancel</Text>
 							</TouchableOpacity>
 							<TouchableOpacity
-								style={styles.modalConfirmButton}
+								style={[styles.modalConfirmButton, { backgroundColor: theme.colors.notification }]}
 								onPress={() => {
 									clearStorage();
 									handleModalVisible('clear');
 								}}>
-								<Text style={styles.buttonText}>Confirm</Text>
+								<Text style={[styles.buttonText, { color: theme.colors.text }]}>Confirm</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -84,12 +86,10 @@ const Settings = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#363636',
 		padding: 20,
 		paddingTop: 60,
 	},
 	header: {
-		color: '#fff',
 		fontSize: 28,
 		fontWeight: 'bold',
 		marginBottom: 30,
@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
 	optionButton: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		backgroundColor: '#4A4A4A',
 		padding: 15,
 		borderRadius: 10,
 		marginBottom: 15,
@@ -109,7 +108,6 @@ const styles = StyleSheet.create({
 		elevation: 5,
 	},
 	optionText: {
-		color: '#fff',
 		fontSize: 18,
 		fontWeight: '600',
 		marginLeft: 15,
@@ -117,7 +115,6 @@ const styles = StyleSheet.create({
 	clearButton: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		backgroundColor: '#FF4F4F',
 		padding: 15,
 		borderRadius: 10,
 		marginTop: 20,
@@ -129,7 +126,6 @@ const styles = StyleSheet.create({
 		elevation: 5,
 	},
 	buttonText: {
-		color: '#fff',
 		fontSize: 18,
 		fontWeight: '600',
 		marginLeft: 15,
@@ -141,20 +137,17 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	modalContainer: {
-		backgroundColor: '#363636',
 		width: '80%',
 		padding: 20,
 		borderRadius: 15,
 		alignItems: 'center',
 	},
 	modalTitle: {
-		color: '#fff',
 		fontSize: 20,
 		fontWeight: 'bold',
 		marginBottom: 15,
 	},
 	modalMessage: {
-		color: '#fff',
 		fontSize: 16,
 		textAlign: 'center',
 		marginBottom: 20,
@@ -166,7 +159,6 @@ const styles = StyleSheet.create({
 		gap: 10,
 	},
 	modalCancelButton: {
-		backgroundColor: '#555',
 		paddingVertical: 12,
 		paddingHorizontal: 20,
 		borderRadius: 10,
@@ -174,7 +166,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	modalConfirmButton: {
-		backgroundColor: '#FF4F4F',
 		paddingVertical: 12,
 		paddingHorizontal: 20,
 		borderRadius: 10,

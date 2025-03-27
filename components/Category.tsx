@@ -13,6 +13,7 @@ const Category: React.FC<Props> = ({ category, handleChoseCategory }) => {
 	const { t } = useTranslation();
 	const deleteCategory = useStore((state) => state.deleteTodoCategory);
 	const categoryExists = useStore((state) => state.categories.some((c) => c.id === category.id));
+	const theme = useStore((state) => state.currentTheme); // Добавляем получение темы
 
 	const handleLongPress = () => {
 		Alert.alert('Actions', '', [
@@ -33,8 +34,8 @@ const Category: React.FC<Props> = ({ category, handleChoseCategory }) => {
 	return (
 		<TouchableOpacity onPress={() => handleChoseCategory(category)} onLongPress={handleLongPress}>
 			<View style={[styles.priorityContainer, { backgroundColor: category.color }]}>
-				<Text style={styles.priorityText}>{category.icon}</Text>
-				<Text numberOfLines={1} style={styles.priorityText}>
+				<Text style={[styles.priorityText, { color: theme.colors.text }]}>{category.icon}</Text>
+				<Text numberOfLines={1} style={[styles.priorityText, { color: theme.colors.text }]}>
 					{category.name}
 				</Text>
 			</View>
@@ -54,7 +55,6 @@ const styles = StyleSheet.create({
 		height: 50,
 	},
 	priorityText: {
-		color: '#fff',
 		marginLeft: 5,
 	},
 });

@@ -17,6 +17,7 @@ const NewCategoryModal: React.FC<Props> = (props) => {
 	const { t } = useTranslation();
 	const { handleCategoryModalToggle, setSelectedCategory } = props;
 	const categories = useStore((state) => state.categories);
+	const theme = useStore((state) => state.currentTheme); // Добавляем получение темы
 	const [isCreationModalVisible, setIsCreationModalVisible] = React.useState(false);
 
 	const handleChoseCategory = (category: ICategory) => {
@@ -27,13 +28,14 @@ const NewCategoryModal: React.FC<Props> = (props) => {
 	const handleOpenCreationModal = () => {
 		setIsCreationModalVisible(true);
 	};
+
 	return !isCreationModalVisible ? (
-		<View style={styles.container}>
+		<View style={[styles.container, { backgroundColor: theme.colors.card }]}>
 			<ScrollView style={{ height: '100%' }}>
 				<View style={styles.categoriesContainer}>
 					<TouchableOpacity onPress={handleOpenCreationModal}>
-						<View style={styles.priorityContainer}>
-							<Entypo name="plus" size={24} color="#fff" />
+						<View style={[styles.priorityContainer, { borderColor: theme.colors.border }]}>
+							<Entypo name="plus" size={24} color={theme.colors.text} />
 						</View>
 					</TouchableOpacity>
 					{categories.map((category) => (
@@ -43,8 +45,8 @@ const NewCategoryModal: React.FC<Props> = (props) => {
 					))}
 				</View>
 			</ScrollView>
-			<TouchableOpacity style={styles.cancelButton} onPress={handleCategoryModalToggle}>
-				<Text style={styles.priorityText}>{t('cancel')}</Text>
+			<TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.colors.notification }]} onPress={handleCategoryModalToggle}>
+				<Text style={[styles.priorityText, { color: theme.colors.text }]}>{t('cancel')}</Text>
 			</TouchableOpacity>
 		</View>
 	) : (
@@ -54,7 +56,6 @@ const NewCategoryModal: React.FC<Props> = (props) => {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: '#363636',
 		padding: 20,
 		borderRadius: 15,
 		width: '90%',
@@ -82,11 +83,9 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 	},
 	priorityText: {
-		color: '#fff',
 		marginLeft: 5,
 	},
 	cancelButton: {
-		backgroundColor: '#FF4F4F',
 		width: '100%',
 		display: 'flex',
 		justifyContent: 'center',
@@ -94,9 +93,6 @@ const styles = StyleSheet.create({
 		padding: 10,
 		marginTop: 30,
 		borderRadius: 8,
-	},
-	categoryButton: {
-		color: '#fff',
 	},
 });
 

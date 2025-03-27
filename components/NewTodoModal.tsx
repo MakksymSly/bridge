@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import React, { useState } from 'react';
 import { formatDate } from '@/utils/utils';
 import { useStore } from '@/store/store';
@@ -18,12 +18,13 @@ interface Props {
 
 const NewTodoModal: React.FC<Props> = (props) => {
 	const { setModalVisible, existingTodo } = props;
+	const theme = useStore((state) => state.currentTheme); // Добавляем получение темы
 	const [title, setTitle] = useState(existingTodo ? existingTodo.title : '');
 	const [description, setDescription] = useState(existingTodo ? existingTodo.description : '');
 	const [images, setImages] = useState<string[]>(existingTodo?.images && existingTodo.images.length > 0 ? existingTodo.images : []);
 	const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
 	const [isPriorityModalVisible, setPriorityModalVisible] = useState(false);
-	const [titleError, setTitleError] = useState(false); // Добавлено состояние для ошибки
+	const [titleError, setTitleError] = useState(false);
 	const addTodo = useStore((state) => state.addTodo);
 	const updateTodo = useStore((state) => state.updateTodo);
 	const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(existingTodo?.category ?? null);
@@ -84,7 +85,7 @@ const NewTodoModal: React.FC<Props> = (props) => {
 	const handleTitleChange = (text: string) => {
 		setTitle(text);
 		if (text.trim()) {
-			setTitleError(false); // Сбрасываем ошибку при вводе текста
+			setTitleError(false);
 		}
 	};
 
@@ -101,7 +102,7 @@ const NewTodoModal: React.FC<Props> = (props) => {
 		setDescription('');
 		setImages([]);
 		setModalVisible(false);
-		setTitleError(false); // Сбрасываем ошибку при отмене
+		setTitleError(false);
 	};
 
 	const removeImage = (index: number) => {
@@ -114,41 +115,33 @@ const NewTodoModal: React.FC<Props> = (props) => {
 	const isCategoryModalShown = isCategoryModalVisible && !isPriorityModalVisible;
 
 	return (
-		<View style={styles.overlay}>
+		<View style={[styles.overlay, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
 			{isModalShown && (
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 					<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? -200 : -300} style={styles.keyboardAvoidingContainer}>
-						<View style={styles.container}>
-							<Text style={styles.title}>{t('addTask')}</Text>
-							<TextInput
-								style={[styles.input, titleError && styles.inputError]} // Добавляем стиль ошибки
-								placeholder={t('taskTitle')}
-								placeholderTextColor="#888"
-								value={title}
-								onChangeText={handleTitleChange} // Используем новый обработчик
-							/>
-							{titleError && (
-								<Text style={styles.errorText}>{t('todoTitleEmptyError')}</Text> // Сообщение об ошибке
-							)}
-							<TextInput style={styles.textArea} multiline numberOfLines={4} placeholder={t('taskDescription')} placeholderTextColor="#888" value={description} onChangeText={setDescription} />
-							<View style={styles.iconContainer}>
-								<TouchableOpacity style={styles.iconButton} onPress={handlePriorityModalToggle}>
-									{selectedPriority ? <Text style={styles.priorityText}>{selectedPriority}</Text> : <Feather name="flag" size={24} color="#fff" />}
+						<View style={[styles.container, { backgroundColor: theme.colors.card }]}>
+							<Text style={[styles.title, { color: theme.colors.text }]}>{t('addTask')}</Text>
+							<TextInput style={[styles.input, { backgroundColor: theme.colors.background, color: theme.colors.text }, titleError && styles.inputError]} placeholder={t('taskTitle')} placeholderTextColor={theme.colors.border} value={title} onChangeText={handleTitleChange} />
+							{titleError && <Text style={[styles.errorText, { color: theme.colors.notification }]}>{t('todoTitleEmptyError')}</Text>}
+							<TextInput style={[styles.textArea, { backgroundColor: theme.colors.background, color: theme.colors.text }]} multiline numberOfLines={4} placeholder={t('taskDescription')} placeholderTextColor={theme.colors.border} value={description} onChangeText={setDescription} />
+							<View style={[styles.iconContainer, { backgroundColor: theme.colors.background }]}>
+								<TouchableOpacity style={[styles.iconButton, { backgroundColor: theme.colors.border }]} onPress={handlePriorityModalToggle}>
+									{selectedPriority ? <Text style={[styles.priorityText, { color: theme.colors.text }]}>{selectedPriority}</Text> : <Feather name="flag" size={24} color={theme.colors.text} />}
 								</TouchableOpacity>
-								<TouchableOpacity style={styles.iconButton} onPress={handleCategoryModalToggle}>
-									<Octicons name="versions" size={24} color={selectedCategory ? selectedCategory.color : '#fff'} />
+								<TouchableOpacity style={[styles.iconButton, { backgroundColor: theme.colors.border }]} onPress={handleCategoryModalToggle}>
+									<Octicons name="versions" size={24} color={selectedCategory ? selectedCategory.color : theme.colors.text} />
 								</TouchableOpacity>
 							</View>
-							<TouchableOpacity style={styles.imageButton} onPress={pickImage}>
-								<Text style={styles.imageButtonText}>{t('addImage')}</Text>
+							<TouchableOpacity style={[styles.imageButton, { backgroundColor: theme.colors.border }]} onPress={pickImage}>
+								<Text style={[styles.imageButtonText, { color: theme.colors.text }]}>{t('addImage')}</Text>
 							</TouchableOpacity>
 
 							{images.length > 0 && (
 								<ScrollView horizontal style={styles.previewContainer} showsHorizontalScrollIndicator={false}>
 									{images.map((img, index) => (
 										<View key={index} style={styles.previewWrapper}>
-											<TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
-												<Text style={styles.removeButtonText}>X</Text>
+											<TouchableOpacity style={[styles.removeButton, { backgroundColor: theme.colors.notification }]} onPress={() => removeImage(index)}>
+												<Text style={[styles.removeButtonText, { color: theme.colors.text }]}>X</Text>
 											</TouchableOpacity>
 											<Image source={{ uri: img }} style={styles.imagePreview} resizeMode="cover" />
 										</View>
@@ -157,11 +150,11 @@ const NewTodoModal: React.FC<Props> = (props) => {
 							)}
 
 							<View style={styles.buttonContainer}>
-								<TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-									<Text style={styles.buttonText}>{t('cancel')}</Text>
+								<TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.colors.notification }]} onPress={handleCancel}>
+									<Text style={[styles.buttonText, { color: theme.colors.text }]}>{t('cancel')}</Text>
 								</TouchableOpacity>
-								<TouchableOpacity style={styles.saveButton} onPress={handleAddTodo}>
-									<Text style={styles.buttonText}>{t('save')}</Text>
+								<TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.colors.primary }]} onPress={handleAddTodo}>
+									<Text style={[styles.buttonText, { color: theme.colors.text }]}>{t('save')}</Text>
 								</TouchableOpacity>
 							</View>
 						</View>
@@ -181,7 +174,6 @@ const styles = StyleSheet.create({
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 		justifyContent: 'center',
 		alignItems: 'center',
 		zIndex: 1,
@@ -191,22 +183,18 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	container: {
-		backgroundColor: '#363636',
 		padding: 20,
 		borderRadius: 15,
 		width: '90%',
 		maxHeight: '100%',
 	},
 	title: {
-		color: '#fff',
 		fontSize: 24,
 		fontWeight: 'bold',
 		marginBottom: 15,
 		textAlign: 'center',
 	},
 	input: {
-		backgroundColor: '#4A4A4A',
-		color: '#fff',
 		paddingHorizontal: 15,
 		paddingVertical: 10,
 		borderRadius: 10,
@@ -215,17 +203,13 @@ const styles = StyleSheet.create({
 	},
 	inputError: {
 		borderWidth: 2,
-		borderColor: '#FF4F4F', // Красная рамка при ошибке
-		marginBottom: 5,
+		borderColor: '#FF4F4F', // Оставляем как есть или можем заменить на theme.colors.notification
 	},
 	errorText: {
-		color: '#FF4F4F',
 		fontSize: 12,
 		marginBottom: 10,
 	},
 	textArea: {
-		backgroundColor: '#4A4A4A',
-		color: '#fff',
 		paddingHorizontal: 15,
 		paddingVertical: 10,
 		borderRadius: 10,
@@ -239,13 +223,11 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'center',
 		gap: 15,
-		backgroundColor: '#4A4A4A',
 		borderRadius: 10,
 		padding: 10,
 		marginBottom: 15,
 	},
 	iconButton: {
-		backgroundColor: '#555',
 		borderRadius: 50,
 		width: 44,
 		height: 44,
@@ -258,14 +240,12 @@ const styles = StyleSheet.create({
 		elevation: 5,
 	},
 	imageButton: {
-		backgroundColor: '#555',
 		padding: 10,
 		borderRadius: 10,
 		alignItems: 'center',
 		marginBottom: 15,
 	},
 	imageButtonText: {
-		color: '#fff',
 		fontSize: 16,
 	},
 	previewContainer: {
@@ -285,7 +265,6 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		top: 0,
 		right: -5,
-		backgroundColor: '#ff4444',
 		width: 20,
 		height: 20,
 		borderRadius: 10,
@@ -294,7 +273,6 @@ const styles = StyleSheet.create({
 		zIndex: 2,
 	},
 	removeButtonText: {
-		color: '#fff',
 		fontSize: 16,
 		lineHeight: 20,
 	},
@@ -304,26 +282,22 @@ const styles = StyleSheet.create({
 		gap: 10,
 	},
 	cancelButton: {
-		backgroundColor: '#FF4F4F',
 		paddingVertical: 12,
 		borderRadius: 10,
 		alignItems: 'center',
 		flex: 1,
 	},
 	saveButton: {
-		backgroundColor: '#8687E7',
 		paddingVertical: 12,
 		borderRadius: 10,
 		alignItems: 'center',
 		flex: 1,
 	},
 	buttonText: {
-		color: '#fff',
 		fontSize: 18,
 		fontWeight: '600',
 	},
 	priorityText: {
-		color: '#fff',
 		fontSize: 22,
 		fontWeight: '800',
 	},

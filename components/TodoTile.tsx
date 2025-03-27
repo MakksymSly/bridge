@@ -10,25 +10,33 @@ interface Props {
 	todo: ITodo;
 	handleLongPress: (todo: ITodo) => void;
 }
+
 const TodoTile: React.FC<Props> = (props) => {
 	const toggleStatus = useStore((state) => state.toggleStatus);
+	const theme = useStore((state) => state.currentTheme);
+
 	const { todo, handleLongPress } = props;
+
 	return (
 		<Link href={`/todo/${todo.id}`} key={todo.id} asChild>
-			<TouchableOpacity key={todo.id} onLongPress={() => handleLongPress(todo)} style={styles.todoItem}>
+			<TouchableOpacity key={todo.id} onLongPress={() => handleLongPress(todo)} style={StyleSheet.flatten([styles.todoItem, { backgroundColor: theme.colors.card }])}>
 				<BouncyCheckbox
 					style={{ flex: 1 }}
-					fillColor="#8687E7"
+					fillColor={theme.colors.primary}
 					isChecked={todo.completed}
 					onPress={() => {
 						toggleStatus(todo.id);
 					}}
 				/>
 				<View style={styles.todoItemTextContainer}>
-					<Text numberOfLines={1} ellipsizeMode="tail" style={[styles.todoItemText, { textDecorationLine: todo.completed ? 'line-through' : 'none' }]}>
+					<Text
+						numberOfLines={1}
+						ellipsizeMode="tail"
+						style={[styles.todoItemText, { color: theme.colors.text, textDecorationLine: todo.completed ? 'line-through' : 'none' }]} // Используем цвет из темы
+					>
 						{todo.title}
 					</Text>
-					<Text style={styles.todoItemSubText}>{todo.DateCreated}</Text>
+					<Text style={[styles.todoItemSubText, { color: theme.colors.text }]}>{todo.DateCreated}</Text>
 				</View>
 				<View style={styles.todoItemInfoContainer}>
 					{todo.category && (
@@ -38,9 +46,9 @@ const TodoTile: React.FC<Props> = (props) => {
 						</View>
 					)}
 					{todo.priority && (
-						<View style={styles.todoItemPriorityContainer}>
-							<Ionicons name="flag-outline" size={24} color="#8687E7" />
-							<Text style={styles.todoItemPriorityText}>{todo.priority}</Text>
+						<View style={[styles.todoItemPriorityContainer, { borderColor: theme.colors.primary }]}>
+							<Ionicons name="flag-outline" size={24} color={theme.colors.primary} />
+							<Text style={[styles.todoItemPriorityText, { color: theme.colors.primary }]}>{todo.priority}</Text>
 						</View>
 					)}
 				</View>
@@ -61,14 +69,12 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 		backgroundColor: '#fafafa',
 	},
-
 	todoItemTextContainer: {
 		flex: 7,
 		gap: 4,
 	},
 	todoItemText: {
 		maxWidth: '70%',
-
 		fontSize: 16,
 	},
 	todoItemSubText: { color: 'grey', fontSize: 14 },
@@ -80,7 +86,6 @@ const styles = StyleSheet.create({
 		borderColor: '#8687E7',
 		borderRadius: 8,
 		padding: 4,
-		color: '#8687E7',
 	},
 	todoItemPriorityText: {
 		color: '#8687E7',
@@ -100,4 +105,5 @@ const styles = StyleSheet.create({
 	},
 	todoItemCategoryIcon: {},
 });
+
 export default TodoTile;

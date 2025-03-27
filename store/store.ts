@@ -4,7 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from 'i18next';
 import { ITodo } from '@/types/ITodo';
 import { ICategory } from '@/types/ICategory';
-
+import { CustomDarkTheme } from '../themes/CustomDarkTheme';
+import { CustomLightTheme } from '../themes/CustomLightTheme';
 interface Store {
 	todos: ITodo[];
 	addTodo: (todo: ITodo) => void;
@@ -18,18 +19,22 @@ interface Store {
 	deleteTodoCategory: (categoryId: number) => void;
 	language: string;
 	setLanguage: (language: string) => void;
-	currentTheme: string;
-	setTheme: (theme: string) => void;
+	currentTheme: typeof CustomLightTheme | typeof CustomDarkTheme;
+	setTheme: (theme: 'light' | 'dark') => void;
+	themeName: 'light' | 'dark';
 }
 
 export const useStore = create<Store>()(
 	persist(
 		(set) => ({
-			currentTheme: 'light',
-			setTheme: (theme) => {
-				set({ currentTheme: theme });
-			},
-			language: 'ua',
+			themeName: 'light',
+			currentTheme: CustomLightTheme,
+			setTheme: (theme) =>
+				set({
+					themeName: theme,
+					currentTheme: theme === 'light' ? CustomLightTheme : CustomDarkTheme,
+				}),
+			language: 'en',
 			setLanguage: async (language) => {
 				set({ language });
 				i18n.changeLanguage(language);
@@ -47,7 +52,7 @@ export const useStore = create<Store>()(
 				{ id: 1, name: 'Work', icon: '💼', color: 'rgba(0, 123, 255, 0.5)' },
 				{ id: 2, name: 'House', icon: '🏠', color: 'rgba(40, 167, 69, 0.5)' },
 				{ id: 3, name: 'Study', icon: '📚', color: 'rgba(255, 193, 7, 0.5)' },
-				{ id: 4, name: 'Health', icon: '🏋️', color: 'rgba(220, 53, 69, KU0.5)' },
+				{ id: 4, name: 'Health', icon: '🏋️', color: 'rgba(220, 53, 69, 0.5)' },
 				{ id: 5, name: 'Shopping', icon: '🛒', color: 'rgba(23, 162, 184, 0.5)' },
 				{ id: 6, name: 'Finance', icon: '💰', color: 'rgba(108, 117, 125, 0.5)' },
 				{ id: 7, name: 'Games', icon: '🎮', color: 'rgba(102, 16, 242, 0.5)' },

@@ -11,6 +11,7 @@ interface Props {
 
 const CategoryCreator: React.FC<Props> = ({ setIsCreationModalVisible }) => {
 	const { t } = useTranslation();
+	const theme = useStore((state) => state.currentTheme);
 
 	const icons = Icons;
 	const colors = Colors;
@@ -36,41 +37,41 @@ const CategoryCreator: React.FC<Props> = ({ setIsCreationModalVisible }) => {
 
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-			<View style={styles.container}>
-				<Text style={styles.label}>{t('categoryName')}</Text>
+			<View style={[styles.container, { backgroundColor: theme.colors.card }]}>
+				<Text style={[styles.label, { color: theme.colors.text }]}>{t('categoryName')}</Text>
 				<TextInput
-					style={[styles.input, error ? styles.inputError : null]}
+					style={[styles.input, { backgroundColor: theme.colors.background, color: theme.colors.text }, error ? styles.inputError : null]}
 					placeholder={t('enterCategoryName')}
-					placeholderTextColor="#999"
+					placeholderTextColor={theme.colors.border}
 					value={category}
 					onChangeText={(text) => {
 						setCategory(text);
 						setError(null);
 					}}
 				/>
-				{error && <Text style={styles.errorText}>{error}</Text>}
+				{error && <Text style={[styles.errorText, { color: theme.colors.notification }]}>{error}</Text>}
 
-				<Text style={styles.label}>{t('categoryIcon')}</Text>
+				<Text style={[styles.label, { color: theme.colors.text }]}>{t('categoryIcon')}</Text>
 				<View style={styles.iconContainer}>
 					{icons.map((item) => (
-						<TouchableOpacity key={item} style={[styles.iconBox, icon === item && styles.selectedIcon]} onPress={() => setIcon(item)}>
+						<TouchableOpacity key={item} style={[styles.iconBox, { backgroundColor: theme.colors.background }, icon === item && styles.selectedIcon, icon === item && { borderColor: `${theme.dark ? '#fff' : '#000'}` }]} onPress={() => setIcon(item)}>
 							<Text style={styles.iconText}>{item}</Text>
 						</TouchableOpacity>
 					))}
 				</View>
 
-				<Text style={styles.label}>{t('categoryColor')}</Text>
+				<Text style={[styles.label, { color: theme.colors.text }]}>{t('categoryColor')}</Text>
 				<View style={styles.colorContainer}>
 					{colors.map((col) => (
-						<TouchableOpacity key={col} style={[styles.colorBox, { backgroundColor: col }, color === col && styles.selectedColor]} onPress={() => setColor(col)} />
+						<TouchableOpacity key={col} style={[styles.colorBox, { backgroundColor: col, borderColor: theme.colors.border }, color === col && styles.selectedColor, color === col && { borderColor: `${theme.dark ? '#fff' : '#000'}` }]} onPress={() => setColor(col)} />
 					))}
 				</View>
 
-				<TouchableOpacity style={[styles.button, { backgroundColor: '#8687E7' }]} onPress={handleAddCategory}>
-					<Text style={styles.buttonText}>{t('add')}</Text>
+				<TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.primary }]} onPress={handleAddCategory}>
+					<Text style={[styles.buttonText, { color: theme.colors.text }]}>{t('add')}</Text>
 				</TouchableOpacity>
-				<TouchableOpacity style={[styles.button, { backgroundColor: '#FF4F4F' }]} onPress={handleModalClose}>
-					<Text style={styles.buttonText}>{t('cancel')}</Text>
+				<TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.notification }]} onPress={handleModalClose}>
+					<Text style={[styles.buttonText, { color: theme.colors.text }]}>{t('cancel')}</Text>
 				</TouchableOpacity>
 			</View>
 		</TouchableWithoutFeedback>
@@ -79,7 +80,6 @@ const CategoryCreator: React.FC<Props> = ({ setIsCreationModalVisible }) => {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: '#2C2C2C',
 		padding: 20,
 		borderRadius: 15,
 		width: '90%',
@@ -87,7 +87,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	label: {
-		color: '#fff',
 		fontSize: 16,
 		marginBottom: 5,
 	},
@@ -104,7 +103,6 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: '#3E3E3E',
 	},
 	selectedIcon: {
 		borderWidth: 2,
@@ -114,8 +112,6 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 	},
 	input: {
-		backgroundColor: '#3E3E3E',
-		color: '#fff',
 		borderRadius: 8,
 		padding: 10,
 		fontSize: 16,
@@ -127,7 +123,6 @@ const styles = StyleSheet.create({
 		borderColor: '#FF4F4F',
 	},
 	errorText: {
-		color: '#FF4F4F',
 		marginBottom: 10,
 		fontSize: 14,
 	},
@@ -145,7 +140,6 @@ const styles = StyleSheet.create({
 	},
 	selectedColor: {
 		borderWidth: 2,
-		borderColor: '#fff',
 	},
 	button: {
 		width: '100%',
@@ -156,7 +150,6 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 	},
 	buttonText: {
-		color: '#fff',
 		fontWeight: 'bold',
 		fontSize: 16,
 	},

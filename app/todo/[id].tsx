@@ -10,6 +10,7 @@ const id = () => {
 	const { t } = useTranslation();
 	const params = useLocalSearchParams();
 	const todos = useStore((state) => state.todos);
+	const theme = useStore((state) => state.currentTheme);
 	const [currentTodo, setCurrentTodo] = useState<ITodo>({
 		id: 0,
 		title: '',
@@ -43,15 +44,15 @@ const id = () => {
 	};
 
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, { backgroundColor: theme.colors.background }]}>
 			{error ? (
-				<Text style={styles.errorText}>{error}</Text>
+				<Text style={[styles.errorText, { color: theme.colors.notification }]}>{error}</Text>
 			) : (
-				<View style={styles.todoCard}>
-					<Text style={styles.title}>{currentTodo.title}</Text>
+				<View style={[styles.todoCard, { backgroundColor: theme.colors.card }]}>
+					<Text style={[styles.title, { color: theme.colors.text, borderBottomColor: theme.colors.border }]}>{currentTodo.title}</Text>
 					<View style={styles.detailContainer}>
-						<Text style={styles.label}>{t('description')}:</Text>
-						<Text style={styles.description}>{currentTodo.description}</Text>
+						<Text style={[styles.label, { color: theme.colors.text }]}>{t('description')}:</Text>
+						<Text style={[styles.description, { color: theme.colors.text }]}>{currentTodo.description}</Text>
 					</View>
 					<View style={styles.infoRow}>
 						<View style={styles.imagesContainer}>
@@ -62,30 +63,36 @@ const id = () => {
 							))}
 						</View>
 					</View>
-					<View style={styles.separator}></View>
+					<View style={[styles.separator, { backgroundColor: theme.colors.border }]}></View>
 					<View style={styles.infoRow}>
-						<Text style={styles.value}>{currentTodo.category ? <Category category={currentTodo.category} handleChoseCategory={() => {}} /> : 'Uncategorized'}</Text>
+						<Text style={[styles.value, { color: theme.colors.text }]}>{currentTodo.category ? <Category category={currentTodo.category} handleChoseCategory={() => {}} /> : 'Uncategorized'}</Text>
 					</View>
-					<View style={styles.separator}></View>
+					<View style={[styles.separator, { backgroundColor: theme.colors.border }]}></View>
 					<View style={styles.infoRow}>
-						<Text style={styles.label}>{t('date')}:</Text>
-						<Text style={styles.value}>{currentTodo.DateCreated}</Text>
-					</View>
-					<View style={styles.infoRow}>
-						<Text style={styles.label}>{t('completed')}:</Text>
-						<Text style={[styles.value, { color: currentTodo.completed ? '#00cc00' : '#ff4444' }]}>{currentTodo.completed ? `${t('yes')}` : `${t('no')}`}</Text>
+						<Text style={[styles.label, { color: theme.colors.text }]}>{t('date')}:</Text>
+						<Text style={[styles.value, { color: theme.colors.text }]}>{currentTodo.DateCreated}</Text>
 					</View>
 					<View style={styles.infoRow}>
-						<Text style={styles.label}>ID:</Text>
-						<Text style={styles.value}>{currentTodo.id}</Text>
+						<Text style={[styles.label, { color: theme.colors.text }]}>{t('completed')}:</Text>
+						<Text
+							style={[
+								styles.value,
+								{ color: currentTodo.completed ? '#00cc00' : theme.colors.notification }, // Оставляем зелёный для "yes", используем notification для "no"
+							]}>
+							{currentTodo.completed ? `${t('yes')}` : `${t('no')}`}
+						</Text>
+					</View>
+					<View style={styles.infoRow}>
+						<Text style={[styles.label, { color: theme.colors.text }]}>ID:</Text>
+						<Text style={[styles.value, { color: theme.colors.text }]}>{currentTodo.id}</Text>
 					</View>
 				</View>
 			)}
 
 			<Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-				<View style={styles.modalOverlay}>
-					<TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
-						<Text style={styles.modalCloseText}>×</Text>
+				<View style={[styles.modalOverlay, { backgroundColor: 'rgba(0, 0, 0, 0.8)' }]}>
+					<TouchableOpacity style={[styles.modalCloseButton, { backgroundColor: theme.colors.card }]} onPress={() => setModalVisible(false)}>
+						<Text style={[styles.modalCloseText, { color: theme.colors.text }]}>×</Text>
 					</TouchableOpacity>
 					{selectedImage && <Image source={{ uri: selectedImage }} style={styles.fullImage} resizeMode="contain" />}
 				</View>
@@ -98,10 +105,8 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		padding: 20,
-		backgroundColor: '#f5f5f5',
 	},
 	todoCard: {
-		backgroundColor: 'white',
 		borderRadius: 12,
 		padding: 20,
 		shadowColor: '#000',
@@ -113,10 +118,8 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 24,
 		fontWeight: 'bold',
-		color: '#333',
 		marginBottom: 15,
 		borderBottomWidth: 1,
-		borderBottomColor: '#eee',
 		paddingBottom: 10,
 	},
 	detailContainer: {
@@ -130,23 +133,19 @@ const styles = StyleSheet.create({
 	label: {
 		fontSize: 16,
 		fontWeight: '600',
-		color: '#666',
 		width: 100,
 	},
 	description: {
 		fontSize: 16,
-		color: '#444',
 		lineHeight: 24,
 		marginTop: 5,
 	},
 	value: {
 		fontSize: 16,
-		color: '#444',
 		flex: 1,
 	},
 	errorText: {
 		fontSize: 18,
-		color: '#ff4444',
 		textAlign: 'center',
 		marginTop: 20,
 	},
@@ -157,7 +156,6 @@ const styles = StyleSheet.create({
 	},
 	separator: {
 		height: 1,
-		backgroundColor: '#ccc',
 		marginVertical: 10,
 	},
 	image: {
@@ -167,7 +165,6 @@ const styles = StyleSheet.create({
 	},
 	modalOverlay: {
 		flex: 1,
-		backgroundColor: 'rgba(0, 0, 0, 0.8)',
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
@@ -182,14 +179,12 @@ const styles = StyleSheet.create({
 		width: 40,
 		height: 40,
 		borderRadius: 20,
-		backgroundColor: '#fff',
 		justifyContent: 'center',
 		alignItems: 'center',
 		zIndex: 1,
 	},
 	modalCloseText: {
 		fontSize: 24,
-		color: '#333',
 		fontWeight: 'bold',
 	},
 });

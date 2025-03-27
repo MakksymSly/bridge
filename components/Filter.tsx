@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useTranslation } from 'react-i18next';
+import { useStore } from '@/store/store';
 
 interface Props {
 	filter: string;
@@ -11,13 +12,15 @@ interface Props {
 
 const Filter: React.FC<Props> = ({ filter, setFilter, setModalVisible }) => {
 	const { t } = useTranslation();
+	const theme = useStore((state) => state.currentTheme); // Добавляем получение темы
+
 	return (
 		<Modal transparent animationType="fade">
-			<View style={styles.overlay}>
-				<View style={styles.modalContainer}>
-					<Text style={styles.title}>{t('selectFilter')}</Text>
+			<View style={[styles.overlay, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
+				<View style={[styles.modalContainer, { backgroundColor: theme.colors.card }]}>
+					<Text style={[styles.title, { color: theme.colors.text }]}>{t('selectFilter')}</Text>
 
-					<Picker selectedValue={filter} onValueChange={(itemValue) => setFilter(itemValue)} style={styles.picker}>
+					<Picker selectedValue={filter} onValueChange={(itemValue) => setFilter(itemValue)} style={[styles.picker, { color: theme.colors.text, backgroundColor: theme.colors.background }]}>
 						<Picker.Item label={t('all')} value="all" />
 						<Picker.Item label={t('completed')} value="completed" />
 						<Picker.Item label={t('inProgress')} value="inProgress" />
@@ -26,8 +29,8 @@ const Filter: React.FC<Props> = ({ filter, setFilter, setModalVisible }) => {
 						<Picker.Item label={t('unprioritized')} value="unprioritized" />
 					</Picker>
 
-					<TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-						<Text style={styles.closeText}>{t('close')}</Text>
+					<TouchableOpacity style={[styles.closeButton, { backgroundColor: theme.colors.notification }]} onPress={() => setModalVisible(false)}>
+						<Text style={[styles.closeText, { color: theme.colors.text }]}>{t('close')}</Text>
 					</TouchableOpacity>
 				</View>
 			</View>
@@ -42,13 +45,11 @@ const styles = StyleSheet.create({
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 		justifyContent: 'center',
 		alignItems: 'center',
 		zIndex: 1,
 	},
 	modalContainer: {
-		backgroundColor: '#363636',
 		width: '80%',
 		padding: 20,
 		borderRadius: 10,
@@ -58,17 +59,13 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		fontWeight: 'bold',
 		marginBottom: 10,
-		color: '#fff',
 	},
 	picker: {
 		width: '100%',
-		color: '#fff',
-		backgroundColor: '#4A4A4A',
 		borderRadius: 10,
 	},
 	closeButton: {
 		marginTop: 20,
-		backgroundColor: '#FF4F4F',
 		paddingVertical: 10,
 		paddingHorizontal: 20,
 		borderRadius: 8,
@@ -76,7 +73,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	closeText: {
-		color: '#fff',
 		fontWeight: 'bold',
 	},
 });

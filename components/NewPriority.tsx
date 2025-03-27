@@ -3,6 +3,7 @@ import React from 'react';
 import Priority from './Priority';
 import { Priorities } from '../constants/Priorities';
 import { useTranslation } from 'react-i18next';
+import { useStore } from '@/store/store';
 
 interface Props {
 	handlePriorityModalToggle: () => void;
@@ -12,8 +13,10 @@ interface Props {
 
 const NewPriority: React.FC<Props> = ({ handlePriorityModalToggle, setSelectedPriority, selectedPriority }) => {
 	const { t } = useTranslation();
+	const theme = useStore((state) => state.currentTheme); // Добавляем получение темы
+
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, { backgroundColor: theme.colors.card }]}>
 			<ScrollView contentContainerStyle={styles.scrollContainer}>
 				<View style={styles.priorityContainer}>
 					{Priorities.map((priority) => (
@@ -21,8 +24,8 @@ const NewPriority: React.FC<Props> = ({ handlePriorityModalToggle, setSelectedPr
 					))}
 				</View>
 			</ScrollView>
-			<TouchableOpacity style={styles.cancelButton} onPress={handlePriorityModalToggle}>
-				<Text style={styles.cancelText}>{t('cancel')}</Text>
+			<TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.colors.notification, shadowColor: theme.colors.notification }]} onPress={handlePriorityModalToggle}>
+				<Text style={[styles.cancelText, { color: theme.colors.text }]}>{t('cancel')}</Text>
 			</TouchableOpacity>
 		</View>
 	);
@@ -30,7 +33,6 @@ const NewPriority: React.FC<Props> = ({ handlePriorityModalToggle, setSelectedPr
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: '#2D2D2D',
 		padding: 20,
 		borderRadius: 15,
 		width: '90%',
@@ -55,21 +57,18 @@ const styles = StyleSheet.create({
 		width: '100%',
 	},
 	cancelButton: {
-		backgroundColor: '#FF4F4F',
 		width: '100%',
 		justifyContent: 'center',
 		alignItems: 'center',
 		paddingVertical: 12,
 		borderRadius: 10,
 		marginTop: 20,
-		shadowColor: '#FF4F4F',
 		shadowOffset: { width: 0, height: 3 },
 		shadowOpacity: 0.5,
 		shadowRadius: 4,
 		elevation: 5,
 	},
 	cancelText: {
-		color: '#fff',
 		fontSize: 16,
 		fontWeight: 'bold',
 	},

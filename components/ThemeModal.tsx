@@ -11,22 +11,26 @@ interface Props {
 const ThemeModal: React.FC<Props> = (props) => {
 	const { t } = useTranslation();
 	const { setModalVisible } = props;
-	const theme = useStore((state) => state.currentTheme);
+	const currentTheme = useStore((state) => state.currentTheme);
+	const themeName = useStore((state) => state.themeName);
 	const setTheme = useStore((state) => state.setTheme);
 
 	return (
 		<Modal transparent animationType="fade">
-			<View style={styles.overlay}>
-				<View style={styles.modalContainer}>
-					<Text style={styles.title}>{t('selectTheme')}</Text>
+			<View style={[styles.overlay, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
+				<View style={[styles.modalContainer, { backgroundColor: currentTheme.colors.card }]}>
+					<Text style={[styles.title, { color: currentTheme.colors.text }]}>{t('selectTheme')}</Text>
 					<View style={styles.optionContainer}>
-						<Picker selectedValue={theme} onValueChange={(itemValue) => setTheme(itemValue)} style={styles.picker}>
+						<Picker
+							selectedValue={themeName} // Используем строковое значение темы
+							onValueChange={(itemValue) => setTheme(itemValue as 'light' | 'dark')} // Приводим тип и передаём строку
+							style={[styles.picker, { backgroundColor: currentTheme.colors.background, color: currentTheme.colors.text }]}>
 							<Picker.Item label={t('dark')} value="dark" />
 							<Picker.Item label={t('light')} value="light" />
 						</Picker>
 					</View>
-					<TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible('theme')}>
-						<Text style={styles.buttonText}>{t('close')}</Text>
+					<TouchableOpacity style={[styles.closeButton, { backgroundColor: currentTheme.colors.notification }]} onPress={() => setModalVisible('theme')}>
+						<Text style={[styles.buttonText, { color: currentTheme.colors.text }]}>{t('close')}</Text>
 					</TouchableOpacity>
 				</View>
 			</View>
