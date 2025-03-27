@@ -13,6 +13,7 @@ const ThemeModal: React.FC<Props> = (props) => {
 	const { setModalVisible } = props;
 	const currentTheme = useStore((state) => state.currentTheme);
 	const themeName = useStore((state) => state.themeName);
+
 	const setTheme = useStore((state) => state.setTheme);
 
 	return (
@@ -22,9 +23,9 @@ const ThemeModal: React.FC<Props> = (props) => {
 					<Text style={[styles.title, { color: currentTheme.colors.text }]}>{t('selectTheme')}</Text>
 					<View style={styles.optionContainer}>
 						<Picker selectedValue={themeName} onValueChange={(itemValue) => setTheme(itemValue)} style={[styles.picker, { backgroundColor: currentTheme.colors.background, color: currentTheme.colors.text }]}>
-							<Picker.Item label={t('light')} value="light" />
-							<Picker.Item label={t('dark')} value="dark" />
-							<Picker.Item label={'Marlboro'} value="marlboro" />
+							<Picker.Item color={currentTheme.colors.text} label={t('light')} value="light" />
+							<Picker.Item color={currentTheme.colors.text} label={t('dark')} value="dark" />
+							<Picker.Item color={currentTheme.colors.text} label={'Marlboro'} value="marlboro" />
 						</Picker>
 					</View>
 					<TouchableOpacity style={[styles.closeButton, { backgroundColor: currentTheme.colors.notification }]} onPress={() => setModalVisible('theme')}>

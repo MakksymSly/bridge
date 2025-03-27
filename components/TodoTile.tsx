@@ -37,8 +37,8 @@ const TodoTile: React.FC<Props> = (props) => {
 				<View style={styles.todoItemInfoContainer}>
 					{todo.category && (
 						<View style={[styles.todoItemCategoryContainer, { backgroundColor: todo.category?.color }]}>
-							<Text style={styles.todoItemCategoryIcon}>{todo.category?.icon}</Text>
-							<Text style={styles.todoItemCategoryText}>{todo.category?.name}</Text>
+							<Text style={{ color: theme.colors.text }}>{todo.category?.icon}</Text>
+							<Text style={{ color: theme.colors.text }}>{todo.category?.name}</Text>
 						</View>
 					)}
 					{todo.priority && (
@@ -93,13 +93,11 @@ const styles = StyleSheet.create({
 		padding: 4,
 		borderRadius: 8,
 	},
-	todoItemCategoryText: {},
 	todoItemInfoContainer: {
 		display: 'flex',
 		flexDirection: 'row',
 		gap: 5,
 	},
-	todoItemCategoryIcon: {},
 });
 
 export default TodoTile;
