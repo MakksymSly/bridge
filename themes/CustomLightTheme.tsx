@@ -3,12 +3,12 @@ import { DefaultTheme } from '@react-navigation/native';
 export const CustomLightTheme = {
 	dark: false,
 	colors: {
-		primary: '#d8e2dc',
-		background: '#d6ccc2',
-		card: '#ffcad4',
-		text: '#fff',
-		border: '#f4acb7',
-		notification: '#9d8189',
+		primary: '#4a90e2', // Нежно-голубой
+		background: '#f7f1e3', // Светло-бежевый
+		card: '#ffffff', // Белый
+		text: '#333333', // Темно-серый
+		border: '#dcdcdc', // Светло-серый
+		notification: '#007aff', // Спокойный синий
 	},
 	fonts: DefaultTheme.fonts,
 };

@@ -5,28 +5,33 @@ import { Platform } from 'react-native';
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 import { useTranslation } from 'react-i18next';
+import { CustomDarkTheme } from '@/themes/CustomDarkTheme';
+import { CustomLightTheme } from '@/themes/CustomLightTheme';
+import { useStore } from '@/store/store';
 
 export default function TabLayout() {
-	const colorScheme = useColorScheme();
 	const { t } = useTranslation();
+	const theme = useStore((state) => state.currentTheme);
 	return (
 		<Tabs
 			screenOptions={{
-				tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+				tabBarActiveTintColor: theme.dark ? CustomDarkTheme.colors.primary : CustomLightTheme.colors.primary,
 				headerShown: false,
 				tabBarButton: HapticTab,
 				tabBarHideOnKeyboard: true,
 				tabBarBackground: TabBarBackground,
-				tabBarStyle: Platform.select({
-					ios: {
-						position: 'absolute',
-					},
-					default: {},
-				}),
+				tabBarStyle: {
+					...Platform.select({
+						ios: {
+							position: 'absolute',
+						},
+						default: {},
+					}),
+					backgroundColor: theme.dark ? CustomDarkTheme.colors.card : CustomLightTheme.colors.card,
+				},
 			}}>
 			<Tabs.Screen
 				name="index"

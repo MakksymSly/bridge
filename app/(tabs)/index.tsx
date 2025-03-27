@@ -19,7 +19,6 @@ const App = () => {
 	const [selectedTodo, setSelectedTodo] = useState<ITodo | null>(null);
 	const [filter, setFilter] = useState('all');
 	const deleteTodo = useStore((state) => state.deleteTodo);
-	const setTheme = useStore((state) => state.setTheme);
 	const { t } = useTranslation();
 	const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
 
@@ -60,7 +59,7 @@ const App = () => {
 				<View style={[styles.content, { backgroundColor: theme.colors.background }]}>
 					{isNewTodoModalVisible && <NewTodoModal existingTodo={selectedTodo} setModalVisible={setIsNewTodoModalVisible} />}
 					{isFilterModalVisible && <Filter setModalVisible={setIsFilterModalVisible} filter={filter} setFilter={setFilter} />}
-					{filteredTodos.length === 0 && (
+					{!filteredTodos && (
 						<View style={styles.emptyHomeContainer}>
 							<Image style={styles.emptyHomeImage} source={homeEmptyImage} />
 							<Text style={[styles.emptyHomeText, { color: theme.colors.text }]}>{t('emptyList')}</Text>
