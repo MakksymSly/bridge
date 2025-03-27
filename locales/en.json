@@ -46,5 +46,9 @@
 	"date": "Date",
 	"yes": "Yes",
 	"no": "No",
-	"todoTitleEmptyError": "Todo title cannot be empty"
+	"todoTitleEmptyError": "Todo title cannot be empty",
+	"about": "About",
+	"version": "Version",
+	"developer": "Developer",
+	"developerName": "Maksym Seliutin"
 }

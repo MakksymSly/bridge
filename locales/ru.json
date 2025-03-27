@@ -46,5 +46,9 @@
 	"date": "Дата",
 	"yes": "Да",
 	"no": "Нет",
-	"todoTitleEmptyError": "Название задачи не может быть пустым"
+	"todoTitleEmptyError": "Название задачи не может быть пустым",
+	"about": "О приложении",
+	"version": "Версия",
+	"developer": "Разработчик",
+	"developerName": "Максим Селютин"
 }

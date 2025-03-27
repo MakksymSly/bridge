@@ -23,7 +23,7 @@ const LanguageModal: React.FC<Props> = (props) => {
 					<View style={styles.optionContainer}>
 						<Picker selectedValue={language} onValueChange={(itemValue) => setLanguage(itemValue)} style={[styles.picker, { backgroundColor: theme.colors.background, color: theme.colors.text }]}>
 							<Picker.Item label="English" value="en" />
-							<Picker.Item label="Ukrainian" value="ua" />
+							<Picker.Item label="Українська" value="ua" />
 							<Picker.Item label="Русский" value="ru" />
 						</Picker>
 					</View>

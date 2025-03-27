@@ -6,12 +6,14 @@ import Feather from '@expo/vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import { useStore } from '@/store/store';
+import AboutModal from '@/components/AboutModal';
 
 const Settings = () => {
 	const { t } = useTranslation();
 	const [isClearModalVisible, setIsClearModalVisible] = useState(false);
 	const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
 	const [isThemeModalVisible, setIsThemeModalVisible] = useState(false);
+	const [isAboutModalVisible, setIsAboutModalVisible] = useState(false);
 	const theme = useStore((state) => state.currentTheme);
 
 	const handleModalVisible = (name: string) => {
@@ -24,6 +26,9 @@ const Settings = () => {
 				break;
 			case 'theme':
 				setIsThemeModalVisible(!isThemeModalVisible);
+				break;
+			case 'about':
+				setIsAboutModalVisible(!isAboutModalVisible);
 				break;
 		}
 	};
@@ -40,6 +45,7 @@ const Settings = () => {
 		<View style={[styles.container, { backgroundColor: theme.colors.background }]}>
 			{isLanguageModalVisible && <LanguageModal setModalVisible={handleModalVisible} />}
 			{isThemeModalVisible && <ThemeModal setModalVisible={handleModalVisible} />}
+			{isAboutModalVisible && <AboutModal setModalVisible={handleModalVisible} />}
 
 			<Text style={[styles.header, { color: theme.colors.text }]}>{t('settings')}</Text>
 
@@ -51,6 +57,10 @@ const Settings = () => {
 			<TouchableOpacity style={[styles.optionButton, { backgroundColor: theme.colors.card }]} onPress={() => handleModalVisible('language')}>
 				<Feather name="globe" size={24} color={theme.colors.text} />
 				<Text style={[styles.optionText, { color: theme.colors.text }]}>{t('choseLanguage')}</Text>
+			</TouchableOpacity>
+			<TouchableOpacity style={[styles.optionButton, { backgroundColor: theme.colors.card }]} onPress={() => handleModalVisible('about')}>
+				<Feather name="info" size={24} color={theme.colors.text} />
+				<Text style={[styles.optionText, { color: theme.colors.text }]}>{t('about')}</Text>
 			</TouchableOpacity>
 
 			<TouchableOpacity style={[styles.clearButton, { backgroundColor: theme.colors.notification }]} onPress={() => handleModalVisible('clear')}>

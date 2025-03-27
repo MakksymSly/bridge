@@ -46,5 +46,9 @@
 	"description": "Опис",
 	"date": "Дата",
 	"yes": "Так",
-	"no": "Ні"
+	"no": "Ні",
+	"about": "Про додаток",
+	"version": "Версія",
+	"developer": "Розробник",
+	"developerName": "Максим Селютiн"
 }

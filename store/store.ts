@@ -6,6 +6,7 @@ import { ITodo } from '@/types/ITodo';
 import { ICategory } from '@/types/ICategory';
 import { CustomDarkTheme } from '../themes/CustomDarkTheme';
 import { CustomLightTheme } from '../themes/CustomLightTheme';
+import { CustomMarlboroTheme } from '@/themes/CustomMarlboroTheme';
 interface Store {
 	todos: ITodo[];
 	addTodo: (todo: ITodo) => void;
@@ -19,9 +20,9 @@ interface Store {
 	deleteTodoCategory: (categoryId: number) => void;
 	language: string;
 	setLanguage: (language: string) => void;
-	currentTheme: typeof CustomLightTheme | typeof CustomDarkTheme;
-	setTheme: (theme: 'light' | 'dark') => void;
-	themeName: 'light' | 'dark';
+	currentTheme: typeof CustomLightTheme | typeof CustomDarkTheme | typeof CustomMarlboroTheme;
+	setTheme: (theme: 'light' | 'dark' | 'marlboro') => void;
+	themeName: 'light' | 'dark' | 'marlboro';
 }
 
 export const useStore = create<Store>()(
@@ -32,7 +33,7 @@ export const useStore = create<Store>()(
 			setTheme: (theme) =>
 				set({
 					themeName: theme,
-					currentTheme: theme === 'light' ? CustomLightTheme : CustomDarkTheme,
+					currentTheme: theme === 'light' ? CustomLightTheme : theme === 'dark' ? CustomDarkTheme : CustomMarlboroTheme,
 				}),
 			language: 'en',
 			setLanguage: async (language) => {
