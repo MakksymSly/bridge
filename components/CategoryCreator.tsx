@@ -80,11 +80,13 @@ const CategoryCreator: React.FC<Props> = ({ setIsCreationModalVisible }) => {
 
 const styles = StyleSheet.create({
 	container: {
+		position: 'absolute',
 		padding: 20,
 		borderRadius: 15,
 		width: '90%',
-		maxHeight: '80%',
 		alignItems: 'center',
+		top: 300,
+		minHeight: '55%',
 	},
 	label: {
 		fontSize: 16,

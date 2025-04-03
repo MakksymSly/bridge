@@ -44,11 +44,20 @@
 	"unprioritized": "без приорітету",
 	"emptyList": "Поточний список завдань порожній",
 	"description": "Опис",
+	"dateCreated": "Дата створення",
 	"date": "Дата",
 	"yes": "Так",
 	"no": "Ні",
 	"about": "Про додаток",
 	"version": "Версія",
 	"developer": "Розробник",
-	"developerName": "Максим Селютiн"
+	"developerName": "Максим Селютiн",
+	"executeUntil": "Виконати до",
+	"timeLocale": "uk-UA",
+	"noAccessforNotifications": "Немає доступу для відправки повідомлень",
+	"pickDateAndTime": "Оберіть дату і час",
+	"time": "Час",
+	"chosen": "Обрано",
+	"notificationTitle": "Повідомлення!",
+	"notificationBody": "У вас є завдання, яке треба виконати!"
 }

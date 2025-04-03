@@ -19,6 +19,7 @@ interface Store {
 	updateTodoCategory: (todoId: number, categoryId: string) => void;
 	deleteTodoCategory: (categoryId: number) => void;
 	language: string;
+	isHydrated: boolean;
 	setLanguage: (language: string) => void;
 	currentTheme: typeof CustomLightTheme | typeof CustomDarkTheme | typeof CustomMarlboroTheme;
 	setTheme: (theme: 'light' | 'dark' | 'marlboro') => void;
@@ -28,6 +29,7 @@ interface Store {
 export const useStore = create<Store>()(
 	persist(
 		(set) => ({
+			isHydrated: false,
 			themeName: 'light',
 			currentTheme: CustomLightTheme,
 			setTheme: (theme) =>
@@ -35,9 +37,9 @@ export const useStore = create<Store>()(
 					themeName: theme,
 					currentTheme: theme === 'light' ? CustomLightTheme : theme === 'dark' ? CustomDarkTheme : CustomMarlboroTheme,
 				}),
-			language: 'en',
+			language: '',
 			setLanguage: async (language) => {
-				set({ language });
+				set({ language: language });
 				i18n.changeLanguage(language);
 			},
 			todos: [],
@@ -76,6 +78,11 @@ export const useStore = create<Store>()(
 		{
 			name: 'Todos-Store',
 			storage: createJSONStorage(() => AsyncStorage),
+			onRehydrateStorage: () => (state) => {
+				if (state) {
+					state.isHydrated = true;
+				}
+			},
 		}
 	)
 );

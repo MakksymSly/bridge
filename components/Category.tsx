@@ -24,7 +24,7 @@ const Category: React.FC<Props> = ({ category, handleChoseCategory }) => {
 					deleteCategory(category.id);
 				},
 			},
-			{ text: `${t('edit')}`, style: 'default' },
+
 			{ text: `${t('cancel')}`, style: 'cancel' },
 		]);
 	};
@@ -53,9 +53,11 @@ const styles = StyleSheet.create({
 		width: 100,
 		borderRadius: 10,
 		height: 50,
+		minWidth: 150,
 	},
 	priorityText: {
 		marginLeft: 5,
+		maxWidth: 100,
 	},
 });
 

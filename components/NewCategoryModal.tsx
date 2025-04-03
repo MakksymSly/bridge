@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
 		width: 100,
 		height: 50,
 		borderRadius: 10,
+		minWidth: 150,
 	},
 	priorityText: {
 		marginLeft: 5,

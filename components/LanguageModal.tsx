@@ -22,9 +22,9 @@ const LanguageModal: React.FC<Props> = (props) => {
 					<Text style={[styles.title, { color: theme.colors.text }]}>{t('selectLanguage')}</Text>
 					<View style={styles.optionContainer}>
 						<Picker selectedValue={language} onValueChange={(itemValue) => setLanguage(itemValue)} style={[styles.picker, { backgroundColor: theme.colors.background, color: theme.colors.text }]}>
-							<Picker.Item color={theme.colors.text} label="English" value="en" />
-							<Picker.Item color={theme.colors.text} label="Українська" value="ua" />
-							<Picker.Item color={theme.colors.text} label="Русский" value="ru" />
+							<Picker.Item style={{ backgroundColor: theme.colors.background }} color={theme.colors.text} label="English" value="en" />
+							<Picker.Item style={{ backgroundColor: theme.colors.background }} color={theme.colors.text} label="Українська" value="ua" />
+							<Picker.Item style={{ backgroundColor: theme.colors.background }} color={theme.colors.text} label="Русский" value="ru" />
 						</Picker>
 					</View>
 					<TouchableOpacity style={[styles.closeButton, { backgroundColor: theme.colors.notification }]} onPress={() => setModalVisible('language')}>

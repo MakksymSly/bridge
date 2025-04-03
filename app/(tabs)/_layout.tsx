@@ -33,7 +33,7 @@ export default function TabLayout() {
 				name="index"
 				options={{
 					title: ``,
-					tabBarIcon: ({ color }) => <IconSymbol size={38} name="house.fill" color={color} />,
+					tabBarIcon: ({ color }) => <IconSymbol size={32} name="house.fill" color={color} />,
 				}}
 			/>
 
@@ -41,7 +41,7 @@ export default function TabLayout() {
 				name="settings"
 				options={{
 					title: ``,
-					tabBarIcon: ({ color }) => <EvilIcons name="gear" size={34} color={color} />,
+					tabBarIcon: ({ color }) => <EvilIcons name="gear" size={32} color={color} />,
 				}}
 			/>
 		</Tabs>

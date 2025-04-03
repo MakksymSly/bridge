@@ -43,6 +43,7 @@
 	"unprioritized": "Unprioritized",
 	"emptyList": "The current list is empty",
 	"description": "Description",
+	"dateCreated": "Creation date",
 	"date": "Date",
 	"yes": "Yes",
 	"no": "No",
@@ -50,5 +51,13 @@
 	"about": "About",
 	"version": "Version",
 	"developer": "Developer",
-	"developerName": "Maksym Seliutin"
+	"developerName": "Maksym Seliutin",
+	"executeUntil": "Execute until",
+	"timeLocale": "en-US",
+	"noAccessforNotifications": "No access for notifications granted",
+	"pickDateAndTime": "Pick date and time",
+	"time": "Time",
+	"chosen": "Chosen",
+	"notificationTitle": "Notification!",
+	"notificationBody": "You have a task to do!"
 }

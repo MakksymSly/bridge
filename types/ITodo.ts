@@ -10,4 +10,5 @@ export interface ITodo {
 	images?: string[];
 	category?: ICategory | null;
 	priority?: number | null;
+	exicuteUntil?: Date | null;
 }

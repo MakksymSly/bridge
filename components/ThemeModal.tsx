@@ -23,9 +23,9 @@ const ThemeModal: React.FC<Props> = (props) => {
 					<Text style={[styles.title, { color: currentTheme.colors.text }]}>{t('selectTheme')}</Text>
 					<View style={styles.optionContainer}>
 						<Picker selectedValue={themeName} onValueChange={(itemValue) => setTheme(itemValue)} style={[styles.picker, { backgroundColor: currentTheme.colors.background, color: currentTheme.colors.text }]}>
-							<Picker.Item color={currentTheme.colors.text} label={t('light')} value="light" />
-							<Picker.Item color={currentTheme.colors.text} label={t('dark')} value="dark" />
-							<Picker.Item color={currentTheme.colors.text} label={'Marlboro'} value="marlboro" />
+							<Picker.Item style={{ backgroundColor: currentTheme.colors.background }} color={currentTheme.colors.text} label={t('light')} value="light" />
+							<Picker.Item style={{ backgroundColor: currentTheme.colors.background }} color={currentTheme.colors.text} label={t('dark')} value="dark" />
+							<Picker.Item style={{ backgroundColor: currentTheme.colors.background }} color={currentTheme.colors.text} label={'Marlboro'} value="marlboro" />
 						</Picker>
 					</View>
 					<TouchableOpacity style={[styles.closeButton, { backgroundColor: currentTheme.colors.notification }]} onPress={() => setModalVisible('theme')}>
@@ -38,6 +38,7 @@ const ThemeModal: React.FC<Props> = (props) => {
 };
 
 const styles = StyleSheet.create({
+	pickerItem: {},
 	overlay: {
 		flex: 1,
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',

@@ -43,6 +43,7 @@
 	"unprioritized": "Без приоритета",
 	"emptyList": "Текущий список задач пуст",
 	"description": "Описание",
+	"dateCreated": "Дата создания",
 	"date": "Дата",
 	"yes": "Да",
 	"no": "Нет",
@@ -50,5 +51,13 @@
 	"about": "О приложении",
 	"version": "Версия",
 	"developer": "Разработчик",
-	"developerName": "Максим Селютин"
+	"developerName": "Максим Селютин",
+	"executeUntil": "Выполнить до",
+	"timeLocale": "ru-RU",
+	"noAccessforNotifications": "Нет доступа для отправки уведомлений",
+	"pickDateAndTime": "Выберите дату и время",
+	"time": "Время",
+	"chosen": "Выбрано",
+	"notificationTitle": "Напоминание!",
+	"notificationBody": "У вас тут делишки не законченные, их я буду делать или кто ? Давай кабанчиком хоп-хоп!"
 }

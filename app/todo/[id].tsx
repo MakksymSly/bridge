@@ -65,21 +65,33 @@ const id = () => {
 					</View>
 					<View style={[styles.separator, { backgroundColor: theme.colors.border }]}></View>
 					<View style={styles.infoRow}>
-						<Text style={[styles.value, { color: theme.colors.text }]}>{currentTodo.category ? <Category category={currentTodo.category} handleChoseCategory={() => {}} /> : 'Uncategorized'}</Text>
+						<Text style={[styles.value, { color: theme.colors.text }]}>{currentTodo.category ? <Category category={currentTodo.category} handleChoseCategory={() => {}} /> : t('uncategorized')}</Text>
 					</View>
 					<View style={[styles.separator, { backgroundColor: theme.colors.border }]}></View>
 					<View style={styles.infoRow}>
-						<Text style={[styles.label, { color: theme.colors.text }]}>{t('date')}:</Text>
+						<Text style={[styles.label, { color: theme.colors.text }]}>{t('dateCreated')}:</Text>
 						<Text style={[styles.value, { color: theme.colors.text }]}>{currentTodo.DateCreated}</Text>
 					</View>
 					<View style={styles.infoRow}>
 						<Text style={[styles.label, { color: theme.colors.text }]}>{t('completed')}:</Text>
 						<Text style={[styles.value, { color: currentTodo.completed ? '#00cc00' : theme.colors.notification }]}>{currentTodo.completed ? `${t('yes')}` : `${t('no')}`}</Text>
 					</View>
-					<View style={styles.infoRow}>
-						<Text style={[styles.label, { color: theme.colors.text }]}>ID:</Text>
-						<Text style={[styles.value, { color: theme.colors.text }]}>{currentTodo.id}</Text>
-					</View>
+					{currentTodo.exicuteUntil && (
+						<View style={styles.infoRow}>
+							<Text style={[styles.label, { color: theme.colors.text }]}>{t('executeUntil')} :</Text>
+							<Text style={[styles.value, { color: theme.colors.text }]}>
+								{currentTodo.exicuteUntil
+									? new Date(currentTodo.exicuteUntil).toLocaleString(t('timeLocale'), {
+											year: 'numeric',
+											month: 'long',
+											day: 'numeric',
+											hour: '2-digit',
+											minute: '2-digit',
+									  })
+									: '-'}
+							</Text>
+						</View>
+					)}
 				</View>
 			)}
 

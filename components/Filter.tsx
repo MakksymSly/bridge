@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useTranslation } from 'react-i18next';
 import { useStore } from '@/store/store';
@@ -7,7 +7,7 @@ import { useStore } from '@/store/store';
 interface Props {
 	filter: string;
 	setFilter: (value: string) => void;
-	setModalVisible(visible: boolean): void;
+	setModalVisible: (visible: boolean) => void;
 }
 
 const Filter: React.FC<Props> = ({ filter, setFilter, setModalVisible }) => {
@@ -15,29 +15,26 @@ const Filter: React.FC<Props> = ({ filter, setFilter, setModalVisible }) => {
 	const theme = useStore((state) => state.currentTheme);
 
 	return (
-		<Modal transparent animationType="fade">
-			<View style={[styles.overlay, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
-				<View style={[styles.modalContainer, { backgroundColor: theme.colors.card }]}>
-					<Text style={[styles.title, { color: theme.colors.text }]}>{t('selectFilter')}</Text>
+		<View style={styles.overlay}>
+			<View style={[styles.modalContainer, { backgroundColor: theme.colors.card }]}>
+				<Text style={[styles.title, { color: theme.colors.text }]}>{t('selectFilter')}</Text>
 
-					<Picker selectedValue={filter} onValueChange={(itemValue) => setFilter(itemValue)} style={[styles.picker, { color: theme.colors.text, backgroundColor: theme.colors.background }]}>
-						<Picker.Item label={t('all')} value="all" />
-						<Picker.Item label={t('completed')} value="completed" />
-						<Picker.Item label={t('inProgress')} value="inProgress" />
-						<Picker.Item label={t('mostPrioritized')} value="prioritized" />
-						<Picker.Item label={t('leastPrioritized')} value="leastPrioritized" />
-						<Picker.Item label={t('unprioritized')} value="unprioritized" />
-					</Picker>
+				<Picker selectedValue={filter} onValueChange={(itemValue) => setFilter(itemValue)} style={[styles.picker, { color: theme.colors.text, backgroundColor: theme.colors.background }]}>
+					<Picker.Item label={t('all')} value="all" />
+					<Picker.Item label={t('completed')} value="completed" />
+					<Picker.Item label={t('inProgress')} value="inProgress" />
+					<Picker.Item label={t('mostPrioritized')} value="prioritized" />
+					<Picker.Item label={t('leastPrioritized')} value="leastPrioritized" />
+					<Picker.Item label={t('unprioritized')} value="unprioritized" />
+				</Picker>
 
-					<TouchableOpacity style={[styles.closeButton, { backgroundColor: theme.colors.notification }]} onPress={() => setModalVisible(false)}>
-						<Text style={[styles.closeText, { color: theme.colors.text }]}>{t('close')}</Text>
-					</TouchableOpacity>
-				</View>
+				<TouchableOpacity style={[styles.closeButton, { backgroundColor: theme.colors.notification }]} onPress={() => setModalVisible(false)}>
+					<Text style={[styles.closeText, { color: theme.colors.text }]}>{t('close')}</Text>
+				</TouchableOpacity>
 			</View>
-		</Modal>
+		</View>
 	);
 };
-
 const styles = StyleSheet.create({
 	overlay: {
 		position: 'absolute',
@@ -47,7 +44,7 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		justifyContent: 'center',
 		alignItems: 'center',
-		zIndex: 1,
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 	},
 	modalContainer: {
 		width: '80%',

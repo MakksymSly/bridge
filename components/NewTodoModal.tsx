@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import { formatDate } from '@/utils/utils';
 import { useStore } from '@/store/store';
 import * as ImagePicker from 'expo-image-picker';
@@ -10,18 +10,32 @@ import { ICategory } from '@/types/ICategory';
 import { ITodo } from '@/types/ITodo';
 import NewPriority from './NewPriority';
 import { useTranslation } from 'react-i18next';
+import CalendarAndTimeModal from './CalendarAndTimeModal';
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+	handleNotification: async () => ({
+		shouldShowAlert: true,
+		shouldPlaySound: true,
+		shouldSetBadge: false,
+	}),
+});
 
 interface Props {
 	setModalVisible: (visible: boolean) => void;
 	existingTodo?: ITodo | null;
+	setExistingTodo: (todo: ITodo | null) => void;
 }
 
 const NewTodoModal: React.FC<Props> = (props) => {
-	const { setModalVisible, existingTodo } = props;
+	const { setModalVisible, existingTodo, setExistingTodo } = props;
 	const theme = useStore((state) => state.currentTheme);
 	const [title, setTitle] = useState(existingTodo ? existingTodo.title : '');
 	const [description, setDescription] = useState(existingTodo ? existingTodo.description : '');
 	const [images, setImages] = useState<string[]>(existingTodo?.images && existingTodo.images.length > 0 ? existingTodo.images : []);
+	const [executionDate, setExecutionDate] = useState<Date | null>(null);
+	const [executionTime, setExecutionTime] = useState<Date | null>(null);
+	const [combinedDateAndTime, setCombinedDateAndTime] = useState<Date | null>(existingTodo?.exicuteUntil ?? null);
 	const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
 	const [isPriorityModalVisible, setPriorityModalVisible] = useState(false);
 	const [titleError, setTitleError] = useState(false);
@@ -29,6 +43,37 @@ const NewTodoModal: React.FC<Props> = (props) => {
 	const updateTodo = useStore((state) => state.updateTodo);
 	const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(existingTodo?.category ?? null);
 	const [selectedPriority, setSelectedPriority] = useState<number | null>(existingTodo?.priority ?? null);
+	const [isCalendarAndTimerModalVisible, setCalendarAndTimerModalVisible] = useState(false);
+
+	useEffect(() => {
+		const setupNotifications = async () => {
+			const { status: existingStatus } = await Notifications.getPermissionsAsync();
+			let finalStatus = existingStatus;
+
+			if (existingStatus !== 'granted') {
+				const { status } = await Notifications.requestPermissionsAsync();
+				finalStatus = status;
+			}
+
+			if (finalStatus !== 'granted') {
+				console.log('Notification permissions not granted');
+				return;
+			}
+
+			if (Platform.OS === 'android') {
+				await Notifications.setNotificationChannelAsync('default', {
+					name: 'default',
+					importance: Notifications.AndroidImportance.MAX,
+					vibrationPattern: [0, 250, 250, 250],
+					lightColor: '#FF231F7C',
+				});
+			}
+
+			console.log('Notification permissions granted');
+		};
+
+		setupNotifications();
+	}, []);
 
 	const pickImage = async () => {
 		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -50,14 +95,51 @@ const NewTodoModal: React.FC<Props> = (props) => {
 		}
 	};
 
-	const handleAddTodo = () => {
+	const combineDateAndTime = (date: Date | null, time: Date | null): Date | null => {
+		if (!date) return null;
+
+		const combinedDate = new Date(date);
+		if (time) {
+			combinedDate.setHours(time.getHours());
+			combinedDate.setMinutes(time.getMinutes());
+			combinedDate.setSeconds(0);
+		}
+
+		return combinedDate;
+	};
+
+	async function scheduleNotification(taskDate: Date, minutesBefore: number) {
+		const notificationTime = new Date(taskDate.getTime() - minutesBefore * 60 * 1000);
+		const now = new Date();
+
+		if (notificationTime <= now) {
+			console.log('Notification time is in the past, skipping...');
+			return;
+		}
+
+		try {
+			await Notifications.scheduleNotificationAsync({
+				content: {
+					title: t('notificationTitle'),
+					body: t('notificationBody'),
+					sound: true,
+				},
+				trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: notificationTime },
+			});
+		} catch (error) {
+			console.error('Error scheduling notification:', error);
+		}
+	}
+
+	const handleAddTodo = async () => {
 		if (!title.trim()) {
 			setTitleError(true);
 			return;
 		}
 
 		setTitleError(false);
-
+		const newCombinedDateAndTime = combineDateAndTime(executionDate, executionTime);
+		setCombinedDateAndTime(newCombinedDateAndTime);
 		const createdNewTodo = {
 			id: Date.now(),
 			title,
@@ -67,6 +149,7 @@ const NewTodoModal: React.FC<Props> = (props) => {
 			images: images.length > 0 ? images : [],
 			category: selectedCategory,
 			priority: selectedPriority,
+			exicuteUntil: newCombinedDateAndTime,
 		};
 
 		if (!existingTodo) {
@@ -75,11 +158,16 @@ const NewTodoModal: React.FC<Props> = (props) => {
 			updateTodo(createdNewTodo, existingTodo.id);
 		}
 
+		if (newCombinedDateAndTime) {
+			await scheduleNotification(newCombinedDateAndTime, 1440);
+		}
+
 		setTitle('');
 		setDescription('');
 		setImages([]);
 		setModalVisible(false);
 		setSelectedCategory(null);
+		setExistingTodo(null);
 	};
 
 	const handleTitleChange = (text: string) => {
@@ -97,12 +185,21 @@ const NewTodoModal: React.FC<Props> = (props) => {
 		setPriorityModalVisible(!isPriorityModalVisible);
 	};
 
+	const handleCalendarAndTimerModalToggle = () => {
+		setCalendarAndTimerModalVisible(!isCalendarAndTimerModalVisible);
+	};
+
 	const handleCancel = () => {
 		setTitle('');
 		setDescription('');
 		setImages([]);
 		setModalVisible(false);
 		setTitleError(false);
+		setExecutionDate(null);
+		setExecutionTime(null);
+		setCombinedDateAndTime(null);
+		setSelectedCategory(null);
+		setSelectedPriority(null);
 	};
 
 	const removeImage = (index: number) => {
@@ -130,6 +227,9 @@ const NewTodoModal: React.FC<Props> = (props) => {
 								</TouchableOpacity>
 								<TouchableOpacity style={[styles.iconButton, { backgroundColor: theme.colors.border }]} onPress={handleCategoryModalToggle}>
 									<Octicons name="versions" size={24} color={selectedCategory ? selectedCategory.color : theme.colors.text} />
+								</TouchableOpacity>
+								<TouchableOpacity style={[styles.iconButton, { backgroundColor: theme.colors.border }]} onPress={handleCalendarAndTimerModalToggle}>
+									<Octicons name="calendar" size={24} color={combinedDateAndTime || executionDate || executionTime ? theme.colors.primary : theme.colors.text} />
 								</TouchableOpacity>
 							</View>
 							<TouchableOpacity style={[styles.imageButton, { backgroundColor: theme.colors.border }]} onPress={pickImage}>
@@ -163,6 +263,9 @@ const NewTodoModal: React.FC<Props> = (props) => {
 			)}
 			{isCategoryModalShown && <NewCategoryModal handleCategoryModalToggle={handleCategoryModalToggle} setSelectedCategory={setSelectedCategory} />}
 			{isPriorityModalVisible && <NewPriority handlePriorityModalToggle={handlePriorityModalToggle} setSelectedPriority={setSelectedPriority} selectedPriority={selectedPriority} />}
+			<Modal visible={isCalendarAndTimerModalVisible} animationType="slide" transparent={true} onRequestClose={handleCalendarAndTimerModalToggle} style={styles.overlay}>
+				<CalendarAndTimeModal setIsVisible={handleCalendarAndTimerModalToggle} setExecutionDate={setExecutionDate} setExecutionTime={setExecutionTime} />
+			</Modal>
 		</View>
 	);
 };
@@ -170,7 +273,7 @@ const NewTodoModal: React.FC<Props> = (props) => {
 const styles = StyleSheet.create({
 	overlay: {
 		position: 'absolute',
-		top: -200,
+		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
