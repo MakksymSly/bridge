@@ -5,6 +5,7 @@ import { useStore } from '@/store/store';
 import { ITodo } from '@/types/ITodo';
 import Category from '@/components/Category';
 import { useTranslation } from 'react-i18next';
+import Priority from '@/components/Priority';
 
 const id = () => {
 	const { t } = useTranslation();
@@ -66,6 +67,9 @@ const id = () => {
 					<View style={[styles.separator, { backgroundColor: theme.colors.border }]}></View>
 					<View style={styles.infoRow}>
 						<Text style={[styles.value, { color: theme.colors.text }]}>{currentTodo.category ? <Category category={currentTodo.category} handleChoseCategory={() => {}} /> : t('uncategorized')}</Text>
+						<Text>
+							<Priority priority={currentTodo.priority ?? 0} />
+						</Text>
 					</View>
 					<View style={[styles.separator, { backgroundColor: theme.colors.border }]}></View>
 					<View style={styles.infoRow}>

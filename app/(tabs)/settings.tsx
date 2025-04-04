@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import { useStore } from '@/store/store';
 import AboutModal from '@/components/AboutModal';
+import * as Updates from 'expo-updates';
 
 const Settings = () => {
 	const { t } = useTranslation();
@@ -41,6 +42,9 @@ const Settings = () => {
 		}
 	};
 
+	const restartApp = () => {
+		Updates.reloadAsync();
+	};
 	return (
 		<View style={[styles.container, { backgroundColor: theme.colors.background }]}>
 			{isLanguageModalVisible && <LanguageModal setModalVisible={handleModalVisible} />}
@@ -75,15 +79,16 @@ const Settings = () => {
 						<Text style={[styles.modalMessage, { color: theme.colors.text }]}>{t('clearStorageMessage')}</Text>
 						<View style={styles.modalButtonContainer}>
 							<TouchableOpacity style={[styles.modalCancelButton, { backgroundColor: theme.colors.border }]} onPress={() => handleModalVisible('clear')}>
-								<Text style={[styles.buttonText, { color: theme.colors.text }]}>Cancel</Text>
+								<Text style={[styles.buttonText, { color: theme.colors.text }]}>{t('cancel')}</Text>
 							</TouchableOpacity>
 							<TouchableOpacity
 								style={[styles.modalConfirmButton, { backgroundColor: theme.colors.notification }]}
 								onPress={() => {
 									clearStorage();
+									restartApp();
 									handleModalVisible('clear');
 								}}>
-								<Text style={[styles.buttonText, { color: theme.colors.text }]}>Confirm</Text>
+								<Text style={[styles.buttonText, { color: theme.colors.text }]}>{t('confirm')}</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -139,6 +144,8 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		fontWeight: '600',
 		marginLeft: 15,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	modalOverlay: {
 		flex: 1,
@@ -166,7 +173,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		width: '100%',
-		gap: 10,
+		gap: 5,
 	},
 	modalCancelButton: {
 		paddingVertical: 12,

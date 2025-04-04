@@ -4,10 +4,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useStore } from '@/store/store';
 
 interface Props {
-	setSelectedPriority: (num: number) => void;
+	setSelectedPriority?: (num: number) => void;
 	priority: number;
-	selectedPriority: number | null;
-	handlePriorityModalToggle: () => void;
+	selectedPriority?: number | null;
+	handlePriorityModalToggle?: () => void;
 }
 
 const Priority: React.FC<Props> = (props) => {
@@ -19,8 +19,8 @@ const Priority: React.FC<Props> = (props) => {
 		<TouchableOpacity
 			style={[styles.todoItemPriorityContainer, { borderColor: theme.colors.primary }, isSelected && { backgroundColor: theme.colors.primary }]}
 			onPress={() => {
-				setSelectedPriority(priority);
-				handlePriorityModalToggle();
+				setSelectedPriority?.(priority);
+				handlePriorityModalToggle?.();
 			}}
 			activeOpacity={0.7}>
 			<Ionicons name="flag-outline" size={20} color={isSelected ? theme.colors.text : theme.colors.primary} />

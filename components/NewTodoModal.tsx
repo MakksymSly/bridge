@@ -226,7 +226,7 @@ const NewTodoModal: React.FC<Props> = (props) => {
 									{selectedPriority ? <Text style={[styles.priorityText, { color: theme.colors.text }]}>{selectedPriority}</Text> : <Feather name="flag" size={24} color={theme.colors.text} />}
 								</TouchableOpacity>
 								<TouchableOpacity style={[styles.iconButton, { backgroundColor: theme.colors.border }]} onPress={handleCategoryModalToggle}>
-									<Octicons name="versions" size={24} color={selectedCategory ? selectedCategory.color : theme.colors.text} />
+									{selectedCategory ? <Text>{selectedCategory.icon}</Text> : <Octicons name="versions" size={24} color={theme.colors.text} />}
 								</TouchableOpacity>
 								<TouchableOpacity style={[styles.iconButton, { backgroundColor: theme.colors.border }]} onPress={handleCalendarAndTimerModalToggle}>
 									<Octicons name="calendar" size={24} color={combinedDateAndTime || executionDate || executionTime ? theme.colors.primary : theme.colors.text} />
